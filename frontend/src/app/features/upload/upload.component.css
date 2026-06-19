@@ -1,0 +1,201 @@
+.app-layout {
+  min-height: 100vh;
+  background-color: #0f172a; /* Slate 900 */
+  color: #f8fafc;
+  font-family: 'Inter', sans-serif;
+}
+
+.app-header {
+  height: 70px;
+  background-color: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-logo {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.3rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+}
+
+.brand-text {
+  font-size: 1.4rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #818cf8 0%, #4f46e5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.logout-btn {
+  color: #fca5a5 !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+  border-radius: 6px !important;
+  font-weight: 500 !important;
+}
+
+.logout-btn:hover {
+  background-color: rgba(239, 68, 68, 0.1) !important;
+}
+
+.section-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+.section-desc {
+  font-size: 1rem;
+  color: #94a3b8 !important;
+}
+
+.glass-card {
+  background: rgba(30, 41, 59, 0.7) !important;
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 16px !important;
+}
+
+.upload-card {
+  border: 2px dashed rgba(255, 255, 255, 0.15) !important;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.upload-card.drag-over {
+  border-color: #818cf8 !important;
+  background-color: rgba(79, 70, 229, 0.1) !important;
+  transform: scale(1.02);
+}
+
+.upload-icon-container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  background-color: rgba(79, 70, 229, 0.1);
+  border-radius: 50%;
+  color: #818cf8;
+}
+
+.upload-icon {
+  font-size: 2.5rem;
+}
+
+.browse-btn, .continue-btn {
+  background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%) !important;
+  color: white !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3) !important;
+  transition: all 0.3s ease !important;
+}
+
+.browse-btn:hover, .continue-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.5) !important;
+}
+
+.progress-bar {
+  height: 8px !important;
+  border-radius: 4px;
+}
+
+.parsing-steps {
+  width: 100%;
+}
+
+.step-row {
+  background-color: rgba(15, 23, 42, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.step-label {
+  color: #94a3b8;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.step-done-text {
+  color: #10b981;
+}
+
+.status-badge.done {
+  color: #10b981;
+  font-size: 1.2rem;
+}
+
+.status-badge.active {
+  display: flex;
+  align-items: center;
+}
+
+.success-icon-container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 90px;
+  height: 90px;
+  background-color: rgba(16, 185, 129, 0.1);
+  border-radius: 50%;
+  color: #10b981;
+}
+
+.success-icon {
+  font-size: 3.2rem;
+}
+
+.profile-summary-box {
+  background-color: rgba(15, 23, 42, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.summary-label {
+  color: #94a3b8;
+  font-size: 0.95rem;
+}
+
+.summary-val {
+  color: #f8fafc;
+  font-size: 1.1rem;
+}
+
+.metric-card {
+  background-color: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.metric-icon {
+  font-size: 1.25rem;
+  color: #818cf8;
+}
+
+.metric-val {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.error-banner {
+  background-color: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.error-text {
+  color: #fca5a5;
+  font-size: 0.85rem;
+}

@@ -1,0 +1,50 @@
+/* You can add global styles to this file, and also import other style files */
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+/* Custom Global Reset & Styles */
+html, body {
+  height: 100%;
+  margin: 0;
+  background-color: #0f172a;
+  color: #f8fafc;
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+}
+
+/* Custom Scrollbar for modern dark theme feel */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* Override Material Form Fields for sleek integration */
+.mat-mdc-form-field {
+  margin-bottom: 8px;
+}
+
+.mat-mdc-card {
+  background: rgba(30, 41, 59, 0.7) !important;
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #f8fafc !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .main-content {
+    padding: 15px !important;
+  }
+}

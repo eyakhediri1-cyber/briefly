@@ -1,0 +1,113 @@
+<div class="app-layout">
+  <!-- Top navigation bar -->
+  <header class="app-header d-flex align-items-center justify-content-between px-4">
+    <div class="header-brand">
+      <span class="brand-logo">B</span>
+      <span class="brand-text">Brieflyy</span>
+    </div>
+    <div class="user-menu d-flex align-items-center gap-3">
+      <span class="user-greeting text-muted">Hello, Scholar</span>
+      <button mat-stroked-button class="logout-btn" (click)="logout()">Sign Out</button>
+    </div>
+  </header>
+
+  <main class="main-content container py-5">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-8 col-lg-6">
+        
+        <!-- Welcome banner -->
+        <div class="text-center mb-5">
+          <h2 class="section-title">Upload your CV</h2>
+          <p class="section-desc text-muted">Let Brieflyy's reasoning parser structure your skills and project achievements.</p>
+        </div>
+
+        <!-- Dropzone Card -->
+        <mat-card class="upload-card glass-card p-5 text-center"
+          [class.drag-over]="dragOver"
+          (dragover)="onDragOver($event)"
+          (dragleave)="onDragLeave($event)"
+          (drop)="onDrop($event)"
+          *ngIf="!uploading && !parsing && !parsedProfileSummary">
+          
+          <div class="upload-icon-container mb-4">
+            <i class="bi bi-cloud-arrow-up-fill upload-icon"></i>
+          </div>
+          
+          <h4 class="mb-2">Drag and drop your PDF resume here</h4>
+          <p class="text-muted mb-4">or browse from your device (PDF, max 5MB)</p>
+          
+          <input type="file" #fileInput class="d-none" (change)="onFileSelected($event)" accept="application/pdf" />
+          <button mat-flat-button color="primary" class="browse-btn py-3 px-4" (click)="fileInput.click()">
+            Browse Files
+          </button>
+          
+          <div *ngIf="uploadError" class="error-banner p-3 rounded mt-4">
+            <span class="error-text"><i class="bi bi-exclamation-triangle-fill me-2"></i>{{ uploadError }}</span>
+          </div>
+        </mat-card>
+
+        <!-- Uploading / Progress Card -->
+        <mat-card class="glass-card p-5 text-center" *ngIf="uploading">
+          <div class="spinner-wrapper mb-4">
+            <div class="spinner-grow text-primary" role="status" style="width: 3rem; height: 3rem;">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+          <h4 class="mb-3">Uploading CV file...</h4>
+          <mat-progress-bar mode="determinate" [value]="uploadProgress" class="progress-bar mb-3"></mat-progress-bar>
+          <span class="text-muted">{{ uploadProgress }}% uploaded</span>
+        </mat-card>
+
+        <!-- Parsing progress checklist -->
+        <mat-card class="glass-card p-5" *ngIf="parsing">
+          <h4 class="mb-4 text-center">Parsing your CV...</h4>
+          <div class="parsing-steps d-flex flex-column gap-3 mb-4">
+            <div *ngFor="let step of parsingSteps" class="step-row d-flex align-items-center justify-content-between p-3 rounded">
+              <span class="step-label" [class.step-done-text]="step.status === 'done'">{{ step.label }}</span>
+              <div class="step-status">
+                <span class="status-badge done" *ngIf="step.status === 'done'"><i class="bi bi-check-circle-fill"></i></span>
+                <span class="status-badge active" *ngIf="step.status === 'active'"><div class="spinner-border spinner-border-sm text-primary"></div></span>
+                <span class="status-badge pending text-muted" *ngIf="step.status === 'pending'"><i class="bi bi-circle"></i></span>
+              </div>
+            </div>
+          </div>
+          <mat-progress-bar mode="indeterminate" class="progress-bar"></mat-progress-bar>
+        </mat-card>
+
+        <!-- Success Profile Summary Card -->
+        <mat-card class="glass-card p-5 text-center success-card" *ngIf="parsedProfileSummary">
+          <div class="success-icon-container mb-4">
+            <i class="bi bi-check-all success-icon"></i>
+          </div>
+          
+          <h3 class="mb-2">CV Structured Successfully!</h3>
+          <p class="text-muted mb-4">Review the reasoning profile parsed from your resume:</p>
+          
+          <div class="profile-summary-box p-4 rounded mb-5 text-start">
+            <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom border-secondary">
+              <span class="summary-label">Name</span>
+              <span class="summary-val font-weight-bold">{{ parsedProfileSummary.full_name }}</span>
+            </div>
+            
+            <div class="row g-3" *ngIf="profileMetrics.length > 0">
+              <div class="col-6" *ngFor="let metric of profileMetrics">
+                <div class="metric-card p-3 rounded text-center">
+                  <i class="bi {{ metric.icon }} metric-icon d-block mb-2"></i>
+                  <span class="metric-val d-block">{{ metric.label }}: {{ metric.count }}</span>
+                </div>
+              </div>
+            </div>
+            <p class="text-muted small mt-3 mb-0" *ngIf="profileMetrics.length === 0">
+              Profile parsed, but no structured sections were detected. Try a more detailed CV.
+            </p>
+          </div>
+
+          <button mat-flat-button color="primary" routerLink="/search" class="continue-btn w-100 py-3">
+            Continue to Job Search
+          </button>
+        </mat-card>
+
+      </div>
+    </div>
+  </main>
+</div>

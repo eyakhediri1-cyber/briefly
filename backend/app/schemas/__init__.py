@@ -1,0 +1,1 @@
+"""Brieflyy — Pydantic Schemas Package"""

@@ -1,0 +1,167 @@
+.app-layout {
+  min-height: 100vh;
+  background-color: #0f172a; /* Slate 900 */
+  color: #f8fafc;
+  font-family: 'Inter', sans-serif;
+}
+
+.app-header {
+  height: 70px;
+  background-color: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-logo {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.3rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+}
+
+.brand-text {
+  font-size: 1.4rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #818cf8 0%, #4f46e5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.logout-btn {
+  color: #fca5a5 !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+  border-radius: 6px !important;
+  font-weight: 500 !important;
+}
+
+.logout-btn:hover {
+  background-color: rgba(239, 68, 68, 0.1) !important;
+}
+
+.loading-container, .error-container {
+  min-height: calc(100vh - 70px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.back-link-btn {
+  color: #94a3b8 !important;
+  font-weight: 500 !important;
+}
+
+.back-link-btn:hover {
+  color: #818cf8 !important;
+}
+
+.tailor-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+/* ATS CARD */
+.ats-card {
+  border: 1px solid rgba(16, 185, 129, 0.3) !important;
+}
+
+.ats-val {
+  font-weight: 800;
+  font-size: 1.8rem;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.ats-icon-box {
+  font-size: 2.2rem;
+}
+
+/* DIFF BOXES */
+.diff-text-box {
+  min-height: 120px;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.diff-text-box.original {
+  background-color: rgba(239, 68, 68, 0.05);
+  border-left: 4px solid #ef4444;
+}
+
+.diff-text-box.tailored {
+  background-color: rgba(16, 185, 129, 0.05);
+  border-left: 4px solid #10b981;
+}
+
+.diff-content {
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.bg-checkbox {
+  background-color: rgba(15, 23, 42, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.approve-checkbox-text {
+  font-size: 0.9rem;
+}
+
+::ng-deep .approve-checkbox .mdc-checkbox__background {
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Sticky Bottom Bar */
+.sticky-bottom-bar {
+  background-color: rgba(30, 41, 59, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.3);
+  position: sticky;
+  bottom: 20px;
+  z-index: 100;
+}
+
+.btn-download {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  color: white !important;
+  font-weight: 700 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3) !important;
+  transition: all 0.3s ease !important;
+}
+
+.btn-download:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5) !important;
+}
+
+.btn-download:disabled {
+  background: rgba(16, 185, 129, 0.3) !important;
+  color: rgba(255, 255, 255, 0.5) !important;
+  box-shadow: none !important;
+}
+
+.glass-card {
+  background: rgba(30, 41, 59, 0.7) !important;
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 16px !important;
+}
+
+.uppercase {
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}

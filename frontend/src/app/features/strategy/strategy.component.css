@@ -1,0 +1,290 @@
+.app-layout {
+  min-height: 100vh;
+  background-color: #0f172a; /* Slate 900 */
+  color: #f8fafc;
+  font-family: 'Inter', sans-serif;
+}
+
+.app-header {
+  height: 70px;
+  background-color: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-logo {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.3rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+}
+
+.brand-text {
+  font-size: 1.4rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #818cf8 0%, #4f46e5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.logout-btn {
+  color: #fca5a5 !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+  border-radius: 6px !important;
+  font-weight: 500 !important;
+}
+
+.logout-btn:hover {
+  background-color: rgba(239, 68, 68, 0.1) !important;
+}
+
+.loading-container, .error-container {
+  min-height: calc(100vh - 70px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #0f172a;
+}
+
+.dashboard-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #f8fafc;
+  margin-bottom: 5px;
+}
+
+.summary-metric-card {
+  background-color: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.summary-metric-icon {
+  font-size: 1.5rem;
+  color: #818cf8;
+}
+
+.summary-metric-val {
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.month-goal-box {
+  background-color: rgba(79, 70, 229, 0.1);
+  border: 1px solid rgba(129, 140, 248, 0.2);
+}
+
+.no-results-banner {
+  background-color: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* 3-Column Styling */
+.column-header {
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.bg-quick-wins {
+  background-color: rgba(16, 185, 129, 0.15) !important;
+}
+
+.bg-stretch-goals {
+  background-color: rgba(245, 158, 11, 0.15) !important;
+}
+
+.bg-develop-first {
+  background-color: rgba(239, 68, 68, 0.15) !important;
+}
+
+.column-title {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.jobs-list {
+  min-height: 200px;
+}
+
+.no-jobs-card {
+  background-color: rgba(30, 41, 59, 0.3);
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.job-card {
+  transition: all 0.3s ease;
+}
+
+.job-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(129, 140, 248, 0.3) !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3) !important;
+}
+
+.job-title-text {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.job-company-text {
+  font-size: 0.85rem;
+}
+
+.fit-score-badge {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  font-weight: 800;
+  font-size: 1rem;
+  border: 1.5px solid currentColor;
+}
+
+/* Skill Chips */
+.chip-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.skill-chip {
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.skill-chip.match {
+  background-color: rgba(16, 185, 129, 0.15);
+  color: #a7f3d0;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.skill-chip.gap-skill {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.view-fit-btn {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  color: #cbd5e1 !important;
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+  border-radius: 6px !important;
+  transition: all 0.2s ease !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.view-fit-btn:hover {
+  background-color: #4f46e5 !important;
+  color: white !important;
+  border-color: #4f46e5 !important;
+}
+
+/* Strategy Panel */
+.strategy-section-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+.lead-text {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #cbd5e1;
+}
+
+.week-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.action-text {
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.roadmap-checkbox {
+  margin-top: 2px;
+}
+
+::ng-deep .roadmap-checkbox .mdc-checkbox__background {
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Recommendation Card */
+.recommendation-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(245, 158, 11, 0.3) !important;
+}
+
+.reco-glow {
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  width: 80px;
+  height: 80px;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.2) 0%, rgba(245, 158, 11, 0) 70%);
+  filter: blur(20px);
+}
+
+.reco-text {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #fef08a;
+}
+
+/* Upskill list */
+.upskill-item {
+  background-color: rgba(15, 23, 42, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.upskill-skill {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.upskill-reason {
+  font-size: 0.8rem;
+}
+
+.glass-card {
+  background: rgba(30, 41, 59, 0.7) !important;
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 16px !important;
+}
+
+.text-indigo {
+  color: #818cf8;
+}
+
+.bg-emerald {
+  background-color: #10b981;
+}
+
+.bg-amber {
+  background-color: #f59e0b;
+}
+
+.bg-red {
+  background-color: #ef4444;
+}

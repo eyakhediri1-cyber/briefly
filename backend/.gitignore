@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+
+# Envs
+.env
+.env.*
+backend/.env
+
+# Virtual env
+venv/
+.venv/
+
+# Secrets (IMPORTANT)
+backend/service-account.json
+
+# Uploads / data
+backend/uploads/
+*.bin
+*.faiss
+
+# Node / Angular
+node_modules/
+dist/
+build/
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store

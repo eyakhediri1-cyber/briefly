@@ -1,0 +1,252 @@
+.app-layout {
+  min-height: 100vh;
+  background-color: #0f172a; /* Slate 900 */
+  color: #f8fafc;
+  font-family: 'Inter', sans-serif;
+}
+
+.app-header {
+  height: 70px;
+  background-color: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-logo {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.3rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+}
+
+.brand-text {
+  font-size: 1.4rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #818cf8 0%, #4f46e5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.logout-btn {
+  color: #fca5a5 !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+  border-radius: 6px !important;
+  font-weight: 500 !important;
+}
+
+.logout-btn:hover {
+  background-color: rgba(239, 68, 68, 0.1) !important;
+}
+
+.section-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+.section-desc {
+  font-size: 1rem;
+  color: #94a3b8 !important;
+}
+
+.glass-card {
+  background: rgba(30, 41, 59, 0.7) !important;
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 16px !important;
+}
+
+::ng-deep .mat-mdc-form-field-flex {
+  background-color: rgba(15, 23, 42, 0.3) !important;
+}
+
+::ng-deep .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__leading,
+::ng-deep .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__notch,
+::ng-deep .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__trailing {
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+::ng-deep .mdc-text-field--outlined:not(.mdc-text-field--disabled):hover .mdc-notched-outline__leading,
+::ng-deep .mdc-text-field--outlined:not(.mdc-text-field--disabled):hover .mdc-notched-outline__notch,
+::ng-deep .mdc-text-field--outlined:not(.mdc-text-field--disabled):hover .mdc-notched-outline__trailing {
+  border-color: rgba(129, 140, 248, 0.5) !important;
+}
+
+::ng-deep .mdc-text-field--outlined:not(.mdc-text-field--disabled).mdc-text-field--focused .mdc-notched-outline__leading,
+::ng-deep .mdc-text-field--outlined:not(.mdc-text-field--disabled).mdc-text-field--focused .mdc-notched-outline__notch,
+::ng-deep .mdc-text-field--outlined:not(.mdc-text-field--disabled).mdc-text-field--focused .mdc-notched-outline__trailing {
+  border-color: #4f46e5 !important;
+}
+
+::ng-deep .mat-mdc-form-field-label-wrapper label,
+::ng-deep .mat-mdc-input-element::placeholder {
+  color: #94a3b8 !important;
+}
+
+::ng-deep .mat-mdc-input-element, ::ng-deep .mat-mdc-select-value {
+  color: #f8fafc !important;
+}
+
+.remote-checkbox {
+  color: #94a3b8;
+}
+
+::ng-deep .mdc-checkbox .mdc-checkbox__background {
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.search-btn {
+  background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%) !important;
+  color: white !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3) !important;
+  transition: all 0.3s ease !important;
+}
+
+.search-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.5) !important;
+}
+
+.progress-container {
+  background-color: rgba(15, 23, 42, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.progress-bar {
+  height: 8px !important;
+  border-radius: 4px;
+}
+
+.text-indigo {
+  color: #818cf8;
+}
+
+.error-banner {
+  background-color: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.error-text {
+  color: #fca5a5;
+  font-size: 0.85rem;
+}
+
+/* Orbit Spinner Animation */
+.pipeline-loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+}
+
+.orbit-spinner, .orbit-spinner * {
+  box-sizing: border-box;
+}
+
+.orbit-spinner {
+  height: 80px;
+  width: 80px;
+  border-radius: 50%;
+  perspective: 800px;
+}
+
+.orbit-spinner .orbit-one {
+  position: absolute;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border-left: 3px solid #818cf8;
+  border-top: 3px solid #818cf8;
+  animation: orbit-one 1.2s linear infinite;
+}
+
+.orbit-spinner .orbit-two {
+  position: absolute;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border-right: 3px solid #4f46e5;
+  border-top: 3px solid #4f46e5;
+  animation: orbit-two 1.2s linear infinite;
+}
+
+.orbit-spinner .orbit-three {
+  position: absolute;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border-right: 3px solid #10b981;
+  border-bottom: 3px solid #10b981;
+  animation: orbit-three 1.2s linear infinite;
+}
+
+@keyframes orbit-one {
+  0% {
+    transform: rotateX(35deg) rotateY(-45deg) rotateZ(0deg);
+  }
+  100% {
+    transform: rotateX(35deg) rotateY(-45deg) rotateZ(360deg);
+  }
+}
+
+@keyframes orbit-two {
+  0% {
+    transform: rotateX(50deg) rotateY(10deg) rotateZ(0deg);
+  }
+  100% {
+    transform: rotateX(50deg) rotateY(10deg) rotateZ(360deg);
+  }
+}
+
+@keyframes orbit-three {
+  0% {
+    transform: rotateX(35deg) rotateY(55deg) rotateZ(0deg);
+  }
+  100% {
+    transform: rotateX(35deg) rotateY(55deg) rotateZ(360deg);
+  }
+}
+
+.pipeline-metric {
+  background-color: rgba(15, 23, 42, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.pipeline-metric-val {
+  font-weight: 700;
+  color: #818cf8;
+  font-size: 1rem;
+}
+
+.pipeline-step-row {
+  background-color: rgba(15, 23, 42, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  font-size: 0.9rem;
+}
+
+.pipeline-step-row.step-active {
+  border-color: rgba(129, 140, 248, 0.4);
+  background-color: rgba(79, 70, 229, 0.1);
+}
+
+.pipeline-step-row.step-done {
+  color: #10b981;
+}

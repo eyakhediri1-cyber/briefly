@@ -1,0 +1,284 @@
+<div class="app-layout">
+  <!-- Top navigation bar -->
+  <header class="app-header d-flex align-items-center justify-content-between px-4">
+    <div class="header-brand" routerLink="/search" style="cursor: pointer;">
+      <span class="brand-logo">B</span>
+      <span class="brand-text">Brieflyy</span>
+    </div>
+    <div class="user-menu d-flex align-items-center gap-3">
+      <span class="user-greeting text-muted">Hello, Scholar</span>
+      <button mat-stroked-button class="logout-btn" (click)="logout()">Sign Out</button>
+    </div>
+  </header>
+
+  <!-- Loading state -->
+  <div class="loading-container text-center py-5" *ngIf="loading">
+    <mat-spinner diameter="60" class="mx-auto mb-4"></mat-spinner>
+    <h4>Analyzing job similarities and synthesizing your strategy...</h4>
+  </div>
+
+  <!-- Error state -->
+  <div class="error-container text-center py-5" *ngIf="!loading && errorMessage">
+    <i class="bi bi-exclamation-octagon-fill text-danger display-4 mb-3 d-block"></i>
+    <h3>Failed to generate strategy</h3>
+    <p class="text-muted">{{ errorMessage }}</p>
+    <button mat-flat-button color="primary" (click)="fetchStrategy()" class="mt-3">Try Again</button>
+  </div>
+
+  <main class="main-content container-fluid py-4 px-md-5" *ngIf="!loading && !errorMessage && strategy">
+    <!-- Header Summary -->
+    <div class="row mb-5">
+      <div class="col-12">
+        <h2 class="dashboard-title">Your Job Search Strategy</h2>
+        <p class="text-muted">Personalized pipeline results and action items based on your CV profile.</p>
+
+        <div class="row g-3 mt-2" *ngIf="totalJobsFound > 0 || totalJobsCategorized > 0">
+          <div class="col-md-4" *ngIf="totalJobsFound > 0">
+            <div class="summary-metric-card p-3 rounded text-center">
+              <i class="bi bi-search summary-metric-icon d-block mb-2"></i>
+              <span class="summary-metric-val">Found {{ totalJobsFound }} jobs</span>
+            </div>
+          </div>
+          <div class="col-md-4" *ngIf="totalJobsCategorized > 0">
+            <div class="summary-metric-card p-3 rounded text-center">
+              <i class="bi bi-bar-chart summary-metric-icon d-block mb-2"></i>
+              <span class="summary-metric-val">{{ totalJobsCategorized }} ranked matches</span>
+            </div>
+          </div>
+          <div class="col-md-4" *ngIf="strategy.quick_wins.length > 0">
+            <div class="summary-metric-card p-3 rounded text-center">
+              <i class="bi bi-lightning summary-metric-icon d-block mb-2"></i>
+              <span class="summary-metric-val">{{ strategy.quick_wins.length }} quick wins</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="no-results-banner p-4 rounded mt-3 text-center" *ngIf="hasNoJobMatches">
+          <i class="bi bi-inbox display-6 text-muted mb-2 d-block"></i>
+          <h4>No ranked matches yet</h4>
+          <p class="text-muted mb-3">
+            No matches found. Try different keywords or locations.
+          </p>
+          <button mat-flat-button color="primary" routerLink="/search">Start a New Search</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3-Column Grid -->
+    <div class="row g-4 mb-5" *ngIf="!hasNoJobMatches">
+      <!-- Column 1: Quick Wins -->
+      <div class="col-12 col-lg-4">
+        <div class="column-header d-flex align-items-center justify-content-between p-3 rounded mb-3 bg-quick-wins">
+          <span class="column-title"><i class="bi bi-check-circle-fill me-2"></i>Quick Wins</span>
+          <span class="badge bg-emerald">{{ strategy.quick_wins.length }} Jobs</span>
+        </div>
+        
+        <div class="jobs-list d-flex flex-column gap-3">
+          <div *ngIf="strategy.quick_wins.length === 0" class="no-jobs-card p-4 rounded text-center text-muted">
+            No matching jobs in this category yet.
+          </div>
+          
+          <mat-card class="job-card glass-card p-4" *ngFor="let job of strategy.quick_wins">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <div>
+                <h4 class="job-title-text mb-1">{{ job.title }}</h4>
+                <p class="job-company-text text-muted mb-0">{{ job.company }} • {{ job.location }}</p>
+              </div>
+              <div class="fit-score-badge d-flex align-items-center justify-content-center"
+                   [style.color]="getFitColor(job.fit_percentage)"
+                   [style.background-color]="getFitBg(job.fit_percentage)">
+                {{ job.fit_percentage }}%
+              </div>
+            </div>
+
+            <!-- Chips -->
+            <div class="mb-4">
+              <div class="matched-skills-container mb-2" *ngIf="job.top_matched_skills.length > 0">
+                <span class="chip-label text-muted d-block mb-1">Top Matches:</span>
+                <div class="d-flex flex-wrap gap-1">
+                  <span class="skill-chip match" *ngFor="let s of job.top_matched_skills">{{ s }}</span>
+                </div>
+              </div>
+
+              <div class="gaps-container" *ngIf="job.top_gaps.length > 0">
+                <span class="chip-label text-muted d-block mb-1">Gaps to Address:</span>
+                <div class="d-flex flex-wrap gap-1">
+                  <span class="skill-chip gap-skill" *ngFor="let s of job.top_gaps">{{ s }}</span>
+                </div>
+              </div>
+            </div>
+
+            <button mat-flat-button class="view-fit-btn w-100 py-2" [routerLink]="['/job', job.job_id, 'fit']">
+              View Full Analysis
+            </button>
+          </mat-card>
+        </div>
+      </div>
+
+      <!-- Column 2: Stretch Goals -->
+      <div class="col-12 col-lg-4">
+        <div class="column-header d-flex align-items-center justify-content-between p-3 rounded mb-3 bg-stretch-goals">
+          <span class="column-title"><i class="bi bi-compass-fill me-2"></i>Stretch Goals</span>
+          <span class="badge bg-amber">{{ strategy.stretch_goals.length }} Jobs</span>
+        </div>
+
+        <div class="jobs-list d-flex flex-column gap-3">
+          <div *ngIf="strategy.stretch_goals.length === 0" class="no-jobs-card p-4 rounded text-center text-muted">
+            No matching jobs in this category yet.
+          </div>
+
+          <mat-card class="job-card glass-card p-4" *ngFor="let job of strategy.stretch_goals">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <div>
+                <h4 class="job-title-text mb-1">{{ job.title }}</h4>
+                <p class="job-company-text text-muted mb-0">{{ job.company }} • {{ job.location }}</p>
+              </div>
+              <div class="fit-score-badge d-flex align-items-center justify-content-center"
+                   [style.color]="getFitColor(job.fit_percentage)"
+                   [style.background-color]="getFitBg(job.fit_percentage)">
+                {{ job.fit_percentage }}%
+              </div>
+            </div>
+
+            <!-- Chips -->
+            <div class="mb-4">
+              <div class="matched-skills-container mb-2" *ngIf="job.top_matched_skills.length > 0">
+                <span class="chip-label text-muted d-block mb-1">Top Matches:</span>
+                <div class="d-flex flex-wrap gap-1">
+                  <span class="skill-chip match" *ngFor="let s of job.top_matched_skills">{{ s }}</span>
+                </div>
+              </div>
+
+              <div class="gaps-container" *ngIf="job.top_gaps.length > 0">
+                <span class="chip-label text-muted d-block mb-1">Gaps to Address:</span>
+                <div class="d-flex flex-wrap gap-1">
+                  <span class="skill-chip gap-skill" *ngFor="let s of job.top_gaps">{{ s }}</span>
+                </div>
+              </div>
+            </div>
+
+            <button mat-flat-button class="view-fit-btn w-100 py-2" [routerLink]="['/job', job.job_id, 'fit']">
+              View Full Analysis
+            </button>
+          </mat-card>
+        </div>
+      </div>
+
+      <!-- Column 3: Develop First -->
+      <div class="col-12 col-lg-4">
+        <div class="column-header d-flex align-items-center justify-content-between p-3 rounded mb-3 bg-develop-first">
+          <span class="column-title"><i class="bi bi-tools me-2"></i>Develop First</span>
+          <span class="badge bg-red">{{ strategy.develop_first.length }} Jobs</span>
+        </div>
+
+        <div class="jobs-list d-flex flex-column gap-3">
+          <div *ngIf="strategy.develop_first.length === 0" class="no-jobs-card p-4 rounded text-center text-muted">
+            No matching jobs in this category yet.
+          </div>
+
+          <mat-card class="job-card glass-card p-4" *ngFor="let job of strategy.develop_first">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <div>
+                <h4 class="job-title-text mb-1">{{ job.title }}</h4>
+                <p class="job-company-text text-muted mb-0">{{ job.company }} • {{ job.location }}</p>
+              </div>
+              <div class="fit-score-badge d-flex align-items-center justify-content-center"
+                   [style.color]="getFitColor(job.fit_percentage)"
+                   [style.background-color]="getFitBg(job.fit_percentage)">
+                {{ job.fit_percentage }}%
+              </div>
+            </div>
+
+            <!-- Chips -->
+            <div class="mb-4">
+              <div class="matched-skills-container mb-2" *ngIf="job.top_matched_skills.length > 0">
+                <span class="chip-label text-muted d-block mb-1">Top Matches:</span>
+                <div class="d-flex flex-wrap gap-1">
+                  <span class="skill-chip match" *ngFor="let s of job.top_matched_skills">{{ s }}</span>
+                </div>
+              </div>
+
+              <div class="gaps-container" *ngIf="job.top_gaps.length > 0">
+                <span class="chip-label text-muted d-block mb-1">Gaps to Address:</span>
+                <div class="d-flex flex-wrap gap-1">
+                  <span class="skill-chip gap-skill" *ngFor="let s of job.top_gaps">{{ s }}</span>
+                </div>
+              </div>
+            </div>
+
+            <button mat-flat-button class="view-fit-btn w-100 py-2" [routerLink]="['/job', job.job_id, 'fit']">
+              View Full Analysis
+            </button>
+          </mat-card>
+        </div>
+      </div>
+    </div>
+
+    <!-- Strategy Panel -->
+    <div class="row g-4 strategy-panel-row" *ngIf="!hasNoJobMatches">
+      <!-- Left part: Summary & checklists -->
+      <div class="col-12 col-md-8">
+        <mat-card class="glass-card p-4 h-100">
+          <h3 class="strategy-section-title mb-3"><i class="bi bi-award-fill text-indigo me-2"></i>Actionable Roadmap</h3>
+          <p class="lead-text mb-4">{{ strategy.executive_summary }}</p>
+
+          <div class="month-goal-box p-3 rounded mb-4" *ngIf="strategy.month_1_goal">
+            <h6 class="mb-2"><i class="bi bi-flag-fill text-warning me-2"></i>Month 1 Goal</h6>
+            <p class="mb-0 text-muted">{{ strategy.month_1_goal }}</p>
+          </div>
+
+          <div class="row g-4">
+            <div class="col-12 col-md-6">
+              <h5 class="week-title mb-3"><i class="bi bi-calendar-event text-primary me-2"></i>Week 1 Checklist</h5>
+              <div class="d-flex flex-column gap-2">
+                <div *ngFor="let action of strategy.week_1_actions" class="d-flex align-items-start gap-2">
+                  <mat-checkbox class="roadmap-checkbox"></mat-checkbox>
+                  <span class="action-text text-muted">{{ action }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <h5 class="week-title mb-3"><i class="bi bi-calendar-event text-success me-2"></i>Week 2 Checklist</h5>
+              <div class="d-flex flex-column gap-2">
+                <div *ngFor="let action of strategy.week_2_actions" class="d-flex align-items-start gap-2">
+                  <mat-checkbox class="roadmap-checkbox"></mat-checkbox>
+                  <span class="action-text text-muted">{{ action }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-card>
+      </div>
+
+      <!-- Right part: Recommendations & Upskill -->
+      <div class="col-12 col-md-4 d-flex flex-column gap-4">
+        <!-- Top Recommendation -->
+        <mat-card class="glass-card p-4 recommendation-card flex-grow-1">
+          <div class="reco-glow"></div>
+          <h3 class="strategy-section-title mb-3"><i class="bi bi-star-fill text-warning me-2"></i>Top Recommendation</h3>
+          <p class="reco-text">{{ strategy.top_recommendation }}</p>
+        </mat-card>
+
+        <!-- Upskill Section -->
+        <mat-card class="glass-card p-4 flex-grow-1">
+          <h3 class="strategy-section-title mb-3"><i class="bi bi-book-half text-indigo me-2"></i>Skills to Develop</h3>
+          <div class="d-flex flex-column gap-3">
+            <div *ngFor="let upskill of strategy.skills_to_upskill" class="upskill-item p-3 rounded d-flex align-items-center justify-content-between">
+              <div>
+                <h6 class="upskill-skill mb-1">{{ upskill.skill }}</h6>
+                <span class="upskill-reason text-muted small d-block">{{ upskill.reason }}</span>
+              </div>
+              <span class="badge" 
+                    [class.bg-primary]="upskill.resource_type === 'course'"
+                    [class.bg-success]="upskill.resource_type === 'project'"
+                    [class.bg-warning]="upskill.resource_type === 'tutorial'">
+                {{ upskill.resource_type }}
+              </span>
+            </div>
+          </div>
+        </mat-card>
+      </div>
+    </div>
+  </main>
+</div>
