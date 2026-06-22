@@ -15,6 +15,8 @@ class TailoredCV(Base):
     job_posting_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job_postings.id", ondelete="CASCADE"), nullable=False)
     original_cv_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("cv_profiles.id"), nullable=False)
     adapted_sections: Mapped[dict] = mapped_column(JSON, nullable=False)
+    original_sections: Mapped[dict] = mapped_column(JSON, nullable=True)
+    preview_summary: Mapped[dict] = mapped_column(JSON, nullable=True)
     diff: Mapped[dict] = mapped_column(JSON, nullable=False)
     ats_score_estimate: Mapped[int] = mapped_column(Integer, nullable=True)
     approved_changes: Mapped[dict] = mapped_column(JSON, nullable=True)
@@ -27,3 +29,4 @@ class TailoredCV(Base):
     user = relationship("User", back_populates="tailored_cvs")
     job_posting = relationship("JobPosting", back_populates="tailored_cvs")
     original_cv = relationship("CVProfile", back_populates="tailored_cvs")
+    applications = relationship("JobApplication", back_populates="tailored_cv", cascade="all, delete-orphan")

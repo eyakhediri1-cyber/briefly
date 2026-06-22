@@ -1,0 +1,29 @@
+.results-container {
+  padding: 16px;
+}
+.stats {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.stat .number {
+  font-size: 20px;
+  font-weight: 700;
+}
+.jobs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+.job-card {
+  padding: 12px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.03);
+}
+.fit .bar {
+  height: 8px;
+  background: #4caf50;
+}
+.actions {
+  margin-top: 8px;
+}

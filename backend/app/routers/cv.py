@@ -2,6 +2,7 @@
 
 import logging
 import uuid
+from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -12,6 +13,8 @@ from app.models.user import User
 from app.models.cv_profile import CVProfile
 from app.schemas.cv import CVUploadResponse, CVProfileResponse
 from app.agents.agent1_profile_parser import profile_parser
+from app.utils.cv_text_parser import extract_basic_profile
+import asyncio
 from app.middleware.auth_middleware import get_current_user
 
 router = APIRouter()
@@ -25,15 +28,16 @@ async def upload_cv(
     db: AsyncSession = Depends(get_db),
 ):
     """Upload a CV file (PDF) and parse it using Agent 1."""
-    # Validate file type
+    logger.info("[CV Upload] File upload started: %s for user=%s", file.filename, current_user.id)
+
     if not file.filename.lower().endswith(".pdf"):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Only PDF files are accepted",
         )
 
-    # Read and validate file size
     content = await file.read()
+    logger.info("[CV Upload] Received %d bytes — starting parse", len(content))
     max_bytes = settings.CV_MAX_SIZE_MB * 1024 * 1024
     if len(content) > max_bytes:
         raise HTTPException(
@@ -41,8 +45,36 @@ async def upload_cv(
             detail=f"File size exceeds {settings.CV_MAX_SIZE_MB}MB limit",
         )
 
-    # Run Agent 1: Profile Parser
-    profile_data = await profile_parser.run(content, file.filename, str(current_user.id))
+    # Run parsing with a bounded timeout to avoid blocking the upload endpoint.
+    try:
+        try:
+            profile_data = await asyncio.wait_for(
+                profile_parser.run(content, file.filename, str(current_user.id)),
+                timeout=getattr(settings, "CV_PARSE_TIMEOUT_SECONDS", 10) + 5,
+            )
+        except asyncio.TimeoutError:
+            logger.warning("[CV Upload] Parsing timed out for user=%s — falling back to basic extraction", current_user.id)
+            # Basic extraction is fast and avoids blocking the request.
+            raw_text = await profile_parser._extract_text(content, file.filename)
+            structured = extract_basic_profile(raw_text)
+            profile_data = {
+                "user_id": str(current_user.id),
+                "raw_text": raw_text,
+                "structured_data": structured,
+                "embedding_index_path": "",
+                "file_path": "",
+                "parsed_at": datetime.utcnow().isoformat(),
+                "from_cache": False,
+            }
+    except HTTPException:
+        # propagate FastAPI HTTPExceptions (e.g. bad input)
+        raise
+    except Exception as e:
+        logger.exception("[CV Upload] Unexpected error during parsing for user=%s: %s", current_user.id, e)
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"CV parsing failed: {e}")
+    from_cache = profile_data.get("from_cache", False)
+    if from_cache:
+        logger.info("[CV Upload] Served from cache for user=%s", current_user.id)
 
     # Store in database
     cv_profile = CVProfile(
@@ -51,8 +83,12 @@ async def upload_cv(
         structured_data=profile_data.get("structured_data", {}),
         embedding_index_path=profile_data.get("embedding_index_path", ""),
     )
-    db.add(cv_profile)
-    await db.flush()
+    try:
+        db.add(cv_profile)
+        await db.flush()
+    except Exception as e:
+        logger.exception("[CV Upload] DB save failed for user=%s: %s", current_user.id, e)
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to save CV profile")
 
     # Build profile summary with labeled metrics (only non-zero counts)
     structured = profile_data.get("structured_data", {})

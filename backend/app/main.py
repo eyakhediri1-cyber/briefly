@@ -9,7 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
 from app.database import init_db
-from app.routers import auth, cv, search, strategy, jobs, tailoring
+from app.routers import auth, cv, search, strategy, jobs, tailoring, applications
 from app.middleware.error_handler import register_error_handlers
 from app.services.redis_service import redis_service
 
@@ -61,6 +61,7 @@ app.include_router(search.router, prefix="/search", tags=["Job Search"])
 app.include_router(strategy.router, prefix="/strategy", tags=["Strategy"])
 app.include_router(jobs.router, prefix="/jobs", tags=["Jobs"])
 app.include_router(tailoring.router, prefix="/tailor", tags=["CV Tailoring"])
+app.include_router(applications.router, prefix="/apply", tags=["Applications"])
 
 
 @app.get("/health", tags=["Health"])

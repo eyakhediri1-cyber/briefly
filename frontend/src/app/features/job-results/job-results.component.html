@@ -1,0 +1,76 @@
+<div class="app-layout">
+  <header class="app-header d-flex align-items-center justify-content-between px-4">
+    <div class="header-brand" routerLink="/search" style="cursor: pointer;">
+      <span class="brand-logo">B</span>
+      <span class="brand-text">Brieflyy</span>
+    </div>
+    <div class="user-menu d-flex align-items-center gap-3">
+      <button mat-stroked-button class="logout-btn" (click)="logout()">Sign Out</button>
+    </div>
+  </header>
+
+  <div class="loading-container text-center py-5" *ngIf="loading">
+    <mat-spinner diameter="48" class="mx-auto mb-3"></mat-spinner>
+    <h4>Loading your job matches...</h4>
+  </div>
+
+  <div class="error-container text-center py-5" *ngIf="!loading && errorMessage">
+    <h3>Could not load results</h3>
+    <p class="text-muted">{{ errorMessage }}</p>
+    <button mat-flat-button color="primary" (click)="fetchResults()">Try Again</button>
+  </div>
+
+  <main class="main-content container py-4" *ngIf="!loading && !errorMessage && results">
+
+    <div class="page-header mb-4">
+      <h2 class="page-title">Your Job Matches</h2>
+      <p class="text-muted mb-0" *ngIf="results.jobs?.length">
+        {{ results.jobs?.length }} jobs ranked by CV match — each with a tailored CV ready to review.
+      </p>
+    </div>
+
+    <div class="no-results-banner p-4 rounded text-center" *ngIf="results.jobs?.length === 0">
+      <h4>No matches. Try different keywords.</h4>
+      <p class="text-muted">Use broader terms like "developer" or "software engineer".</p>
+      <button mat-flat-button color="primary" routerLink="/search">New Search</button>
+    </div>
+
+    <div class="job-list">
+      <mat-card class="job-list-item glass-card p-4 mb-3" *ngFor="let job of results.jobs; let i = index">
+        <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
+          <div>
+            <span class="job-index text-muted">[Job {{ i + 1 }}]</span>
+            <h4 class="job-title mb-1">{{ job.title }} &#64; {{ job.company }}</h4>
+          </div>
+        </div>
+
+        <ul class="job-meta list-unstyled mb-3">
+          <li><strong>Location:</strong> {{ job.location || 'Not specified' }}</li>
+          <li><strong>Type:</strong> {{ formatContractType(job.contract_type) }}</li>
+          <li *ngIf="job.source"><strong>Source:</strong> {{ job.source }}</li>
+        </ul>
+
+        <div class="cv-status mb-3" *ngIf="job.tailored_preview?.tailoring_status === 'ready'">
+          <span class="cv-ready-badge">
+            <i class="bi bi-check-circle me-1"></i>Tailored CV ready
+            <span *ngIf="job.tailored_preview?.ats_score_estimate"> · ATS {{ job.tailored_preview?.ats_score_estimate }}%</span>
+          </span>
+        </div>
+        <div class="cv-status mb-3 text-muted" *ngIf="job.tailored_preview?.tailoring_status !== 'ready'">
+          Tailored CV generating...
+        </div>
+
+        <div class="d-flex flex-wrap gap-2">
+          <button mat-stroked-button (click)="viewTailoredCv(job)">
+            View Tailored CV
+          </button>
+          <button mat-flat-button color="primary"
+                  (click)="applyToJob(job)"
+                  [disabled]="isApplied(job)">
+            {{ isApplied(job) ? 'Applied' : 'Apply' }}
+          </button>
+        </div>
+      </mat-card>
+    </div>
+  </main>
+</div>

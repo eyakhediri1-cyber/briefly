@@ -4,6 +4,7 @@ from app.services.integrations.remoteok import RemoteOKIntegration
 from app.services.integrations.remotive import RemotiveIntegration
 from app.services.integrations.arbeitnow import ArbeitnowIntegration
 from app.services.integrations.aiesec import AIESECIntegration
+from app.services.integrations.jsearch import JSearchIntegration
 
 # Default enabled sources (see ENABLED_JOB_SOURCES in config)
 ALL_INTEGRATIONS = [
@@ -11,4 +12,5 @@ ALL_INTEGRATIONS = [
     RemotiveIntegration,
     ArbeitnowIntegration,
     AIESECIntegration,
+    JSearchIntegration,
 ]

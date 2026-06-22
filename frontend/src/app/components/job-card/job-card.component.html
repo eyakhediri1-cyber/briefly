@@ -1,0 +1,24 @@
+<div class="job-card" (click)="select.emit(job)">
+  <div class="card-header">
+    <h3 class="job-title">{{ job.title }}</h3>
+    <p class="company-name">{{ job.company }}</p>
+  </div>
+
+  <div class="card-body">
+    <div class="job-meta">
+      <span class="location">📍 {{ job.location }}</span>
+    </div>
+
+    <div class="fit-score">
+      <div class="score-bar">
+        <div class="score-progress" [style.width.%]="job.fitScore" [style.backgroundColor]="getScoreColor(job.fitScore)"></div>
+      </div>
+      <div class="score-text">{{ job.fitScore }}% — {{ getScoreLabel(job.fitScore) }}</div>
+    </div>
+  </div>
+
+  <div class="card-footer">
+    <button (click)="skip.emit(job); $event.stopPropagation()">Skip</button>
+    <button (click)="apply.emit(job); $event.stopPropagation()">Apply Now</button>
+  </div>
+</div>

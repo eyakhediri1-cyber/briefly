@@ -26,3 +26,4 @@ class JobPosting(Base):
     session = relationship("JobSearchSession", back_populates="job_postings")
     fit_analyses = relationship("FitAnalysis", back_populates="job_posting", cascade="all, delete-orphan")
     tailored_cvs = relationship("TailoredCV", back_populates="job_posting", cascade="all, delete-orphan")
+    applications = relationship("JobApplication", back_populates="job_posting", cascade="all, delete-orphan")

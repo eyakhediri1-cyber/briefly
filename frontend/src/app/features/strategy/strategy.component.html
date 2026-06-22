@@ -31,6 +31,9 @@
       <div class="col-12">
         <h2 class="dashboard-title">Your Job Search Strategy</h2>
         <p class="text-muted">Personalized pipeline results and action items based on your CV profile.</p>
+        <button mat-flat-button color="primary" [routerLink]="['/results', sessionId]" class="me-2" *ngIf="totalJobsCategorized > 0">
+          View Jobs & Tailored CVs
+        </button>
 
         <div class="row g-3 mt-2" *ngIf="totalJobsFound > 0 || totalJobsCategorized > 0">
           <div class="col-md-4" *ngIf="totalJobsFound > 0">
@@ -108,8 +111,11 @@
               </div>
             </div>
 
-            <button mat-flat-button class="view-fit-btn w-100 py-2" [routerLink]="['/job', job.job_id, 'fit']">
+            <button mat-flat-button class="view-fit-btn w-100 py-2 mb-2" [routerLink]="['/job', job.job_id, 'fit']">
               View Full Analysis
+            </button>
+            <button mat-stroked-button class="w-100 py-2" [routerLink]="['/tailor', job.job_id]">
+              Review Tailored CV
             </button>
           </mat-card>
         </div>
@@ -157,8 +163,11 @@
               </div>
             </div>
 
-            <button mat-flat-button class="view-fit-btn w-100 py-2" [routerLink]="['/job', job.job_id, 'fit']">
+            <button mat-flat-button class="view-fit-btn w-100 py-2 mb-2" [routerLink]="['/job', job.job_id, 'fit']">
               View Full Analysis
+            </button>
+            <button mat-stroked-button class="w-100 py-2" [routerLink]="['/tailor', job.job_id]">
+              Review Tailored CV
             </button>
           </mat-card>
         </div>
@@ -206,8 +215,11 @@
               </div>
             </div>
 
-            <button mat-flat-button class="view-fit-btn w-100 py-2" [routerLink]="['/job', job.job_id, 'fit']">
+            <button mat-flat-button class="view-fit-btn w-100 py-2 mb-2" [routerLink]="['/job', job.job_id, 'fit']">
               View Full Analysis
+            </button>
+            <button mat-stroked-button class="w-100 py-2" [routerLink]="['/tailor', job.job_id]">
+              Review Tailored CV
             </button>
           </mat-card>
         </div>

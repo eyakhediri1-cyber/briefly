@@ -29,15 +29,23 @@
     <!-- Back Link -->
     <div class="mb-4 d-flex justify-content-between align-items-center">
       <button mat-button class="back-link-btn" (click)="goBack()">
-        <i class="bi bi-arrow-left me-2"></i>Back to Job Fit
+        <i class="bi bi-arrow-left me-2"></i>Back to Job List
       </button>
     </div>
 
     <!-- Header / ATS score -->
     <div class="row mb-5 align-items-center">
       <div class="col-12 col-md-8">
-        <h2 class="tailor-title mb-2">Tailor your CV</h2>
-        <p class="text-muted mb-0">Review the tailored suggestions proposed by Brieflyy's writer agent. All changes must be explicitly approved to prevent hallucinations.</p>
+        <h2 class="tailor-title mb-2">
+          {{ mode === 'apply' ? 'Review & Apply' : 'Tailor your CV' }}
+        </h2>
+        <p class="text-muted mb-0" *ngIf="mode === 'apply'">
+          Review the complete tailored CV for this job. Approve all changes, confirm you're happy,
+          then apply — your tailored CV (not the original) will be sent with this application.
+        </p>
+        <p class="text-muted mb-0" *ngIf="mode !== 'apply'">
+          Review the tailored suggestions proposed by Brieflyy's writer agent. All changes must be explicitly approved to prevent hallucinations.
+        </p>
       </div>
       <div class="col-12 col-md-4 text-md-end mt-3 mt-md-0">
         <mat-card class="ats-card glass-card p-3 d-inline-flex align-items-center gap-3">
@@ -52,11 +60,40 @@
       </div>
     </div>
 
-    <!-- Diff list -->
+    <!-- Side-by-side: Original vs Tailored CV -->
+    <div class="row mb-5" *ngIf="showFullCv && tailoredData">
+      <div class="col-12">
+        <h4 class="mb-3">Original vs Tailored CV</h4>
+        <div *ngFor="let section of adaptedSectionKeys" class="mb-4">
+          <h5 class="section-heading mb-2">{{ section }}</h5>
+          <div class="row g-3">
+            <div class="col-12 col-md-6">
+              <div class="diff-text-box original p-3 rounded h-100">
+                <span class="d-block text-muted small mb-2 uppercase">Original</span>
+                <pre class="section-content mb-0">{{ tailoredData.original_sections?.[section] || '—' }}</pre>
+              </div>
+            </div>
+            <div class="col-12 col-md-6">
+              <div class="diff-text-box tailored p-3 rounded h-100">
+                <span class="d-block text-muted small mb-2 uppercase">Tailored</span>
+                <pre class="section-content mb-0">{{ tailoredData.adapted_sections[section] }}</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mt-3" *ngIf="mode === 'apply'">
+          <mat-checkbox [(ngModel)]="cvConfirmed" class="approve-checkbox">
+            <span class="text-light">I confirm this tailored CV is ready to send with my application</span>
+          </mat-checkbox>
+        </div>
+      </div>
+    </div>
+
+    <!-- Change highlights -->
     <div class="row mb-5">
       <div class="col-12">
         <div class="d-flex align-items-center justify-content-between mb-4">
-          <h4>Suggested Rewrites ({{ tailoredData.diff.length }})</h4>
+          <h4>Changes to Review ({{ tailoredData.diff.length }})</h4>
           <button mat-button color="accent" (click)="approveAll()" *ngIf="!isAllApproved()">
             Approve All Suggestion
           </button>
@@ -110,20 +147,42 @@
         <span class="progress-lbl font-weight-bold text-light">
           Approved: {{ approvedIndices.size }} / {{ tailoredData.diff.length }} rewrites
         </span>
-        <div class="progress progress-sm mt-2" style="width: 200px; height: 6px;">
+        <div class="progress progress-sm mt-2" style="width: 200px; height: 6px;" *ngIf="tailoredData.diff.length > 0">
           <div class="progress-bar bg-success" role="progressbar" 
                [style.width.%]="(approvedIndices.size / tailoredData.diff.length) * 100"></div>
         </div>
       </div>
 
       <div class="col-auto d-flex align-items-center gap-3">
+        <button mat-stroked-button class="py-3 px-4"
+                *ngIf="mode === 'apply' || showFullCv"
+                [disabled]="!downloadUrl && tailoredData.pending_approval"
+                (click)="downloadUrl ? window.open(downloadUrl, '_blank') : submitApprovalAndDownload()">
+          <i class="bi bi-download me-2"></i>Download PDF
+        </button>
+
         <button mat-flat-button class="btn-download py-3 px-4" 
+                *ngIf="tailoredData.pending_approval"
                 [disabled]="!isAllApproved() || approving"
                 (click)="submitApprovalAndDownload()">
-          <span *ngIf="!approving"><i class="bi bi-download me-2"></i>Download Tailored CV</span>
+          <span *ngIf="!approving">
+            {{ mode === 'apply' ? 'Approve Changes' : 'Approve & Download' }}
+          </span>
           <mat-spinner diameter="24" *ngIf="approving" class="mx-auto"></mat-spinner>
         </button>
+
+        <button mat-flat-button color="accent" class="btn-apply py-3 px-4"
+                *ngIf="mode === 'apply'"
+                [disabled]="!canApply() || applying"
+                (click)="submitApplication()">
+          <span *ngIf="!applying"><i class="bi bi-send me-2"></i>Apply with Tailored CV</span>
+          <mat-spinner diameter="24" *ngIf="applying" class="mx-auto"></mat-spinner>
+        </button>
       </div>
+    </div>
+
+    <div class="alert alert-success mt-3 p-3 rounded" *ngIf="applyMessage">
+      <i class="bi bi-check-circle me-2"></i>{{ applyMessage }}
     </div>
   </main>
 </div>

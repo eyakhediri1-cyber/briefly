@@ -3,6 +3,7 @@
 from app.utils.job_normalizer import (
     dedupe_key,
     filter_jobs,
+    filter_jobs_with_fallback,
     normalize_job,
     to_raw_job_posting,
 )
@@ -44,11 +45,23 @@ def test_filter_jobs_by_query():
 def test_filter_internships():
     jobs = [
         normalize_job({"title": "Software Intern", "company": "A", "description": ""}, "a"),
-        normalize_job({"title": "Senior Engineer", "company": "B", "description": ""}, "b"),
+        normalize_job({"title": "Junior Developer", "company": "B", "description": "entry level"}, "b"),
+        normalize_job({"title": "Senior Engineer", "company": "C", "description": ""}, "c"),
     ]
     filtered = filter_jobs(jobs, query="", contract_type="internship")
-    assert len(filtered) == 1
-    assert "Intern" in filtered[0]["title"]
+    assert len(filtered) == 2
+
+
+def test_filter_jobs_with_fallback():
+    jobs = [
+        normalize_job({"title": "Sales Rep", "company": "A", "description": "B2B"}, "a"),
+        normalize_job({"title": "Office Manager", "company": "B", "description": "admin"}, "b"),
+    ]
+    result, mode = filter_jobs_with_fallback(
+        jobs, query="python developer", contract_type="internship"
+    )
+    assert len(result) == 2
+    assert mode == "unfiltered_fallback"
 
 
 def test_to_raw_job_posting():

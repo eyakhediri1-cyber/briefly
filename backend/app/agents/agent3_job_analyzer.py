@@ -69,10 +69,6 @@ class JobAnalyzerAgent:
                 if result:
                     analyzed.append(result)
 
-            # Small delay between batches for rate limiting
-            if i + BATCH_SIZE < len(raw_postings):
-                await asyncio.sleep(0.5)
-
         log_agent_complete("Job Analyzer", f"{len(analyzed)} analyzed")
         logger.info(f"Agent 3: Successfully analyzed {len(analyzed)} postings")
         return analyzed

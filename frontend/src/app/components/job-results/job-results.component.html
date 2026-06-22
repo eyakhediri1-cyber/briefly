@@ -1,0 +1,35 @@
+<div class="results-container">
+  <div class="stats" *ngIf="!loading">
+    <div class="stat">
+      <div class="number">{{ stats.totalFound }}</div>
+      <div class="label">Jobs Found</div>
+    </div>
+    <div class="stat">
+      <div class="number">{{ stats.strongMatches }}</div>
+      <div class="label">Strong Matches</div>
+    </div>
+    <div class="stat">
+      <div class="number">{{ stats.cvsReady }}</div>
+      <div class="label">CVs Ready</div>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading">Loading job results…</div>
+
+  <div class="jobs-grid" *ngIf="!loading">
+    <div class="job-card" *ngFor="let j of jobs">
+      <h3>{{ j.title }}</h3>
+      <p class="company">{{ j.company }}</p>
+      <p class="location">{{ j.location }}</p>
+
+      <div class="fit">
+        <div class="bar" [style.width.%]="j.fitScore"></div>
+        <span>{{ j.fitScore }}%</span>
+      </div>
+
+      <div class="actions">
+        <button (click)="applyToJob(j)">Apply</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -7,6 +7,7 @@ from app.models.job_posting import JobPosting
 from app.models.fit_analysis import FitAnalysis
 from app.models.strategy import Strategy
 from app.models.tailored_cv import TailoredCV
+from app.models.job_application import JobApplication
 
 __all__ = [
     "User",
@@ -16,4 +17,5 @@ __all__ = [
     "FitAnalysis",
     "Strategy",
     "TailoredCV",
+    "JobApplication",
 ]

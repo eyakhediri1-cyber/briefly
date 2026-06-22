@@ -49,7 +49,7 @@ async def start_search(
         current_step="Initializing agent pipeline...",
     )
     db.add(session)
-    await db.flush()
+    await db.commit()  # Commit to avoid deadlock with update_session_status
 
     session_id = str(session.id)
 
@@ -70,6 +70,8 @@ async def start_search(
         cv_data,
         request.target_role,
         request.filters.model_dump() if request.filters else {},
+        str(current_user.id),
+        str(cv_profile.id),
     )
 
     return SearchStartResponse(session_id=session.id)

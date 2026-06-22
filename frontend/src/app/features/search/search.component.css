@@ -1,149 +1,156 @@
 .app-layout {
   min-height: 100vh;
-  background-color: #0f172a; /* Slate 900 */
-  color: #f8fafc;
-  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 .app-header {
-  height: 70px;
-  background-color: rgba(30, 41, 59, 0.7);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  height: 72px;
+  background-color: rgba(30, 41, 59, 0.8);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
 }
 
 .header-brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  cursor: pointer;
 }
 
 .brand-logo {
-  width: 36px;
-  height: 36px;
-  background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 800;
-  font-size: 1.3rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+  font-size: 1.4rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4);
 }
 
 .brand-text {
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   font-weight: 800;
-  background: linear-gradient(135deg, #818cf8 0%, #4f46e5 100%);
+  background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .logout-btn {
-  color: #fca5a5 !important;
-  border-color: rgba(239, 68, 68, 0.3) !important;
-  border-radius: 6px !important;
-  font-weight: 500 !important;
+  color: #fecaca !important;
+  border-color: var(--accent-red-bg) !important;
+  border-radius: 10px !important;
+  font-weight: 600 !important;
 }
 
 .logout-btn:hover {
-  background-color: rgba(239, 68, 68, 0.1) !important;
+  background-color: var(--accent-red-bg) !important;
 }
 
 .section-title {
-  font-size: 2rem;
+  font-size: 2.25rem;
   font-weight: 800;
-  color: #f8fafc;
+  color: var(--text-primary);
+  letter-spacing: -0.03em;
 }
 
 .section-desc {
-  font-size: 1rem;
-  color: #94a3b8 !important;
+  font-size: 1.05rem;
+  color: var(--text-muted) !important;
+  line-height: 1.6;
 }
 
 .glass-card {
-  background: rgba(30, 41, 59, 0.7) !important;
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  border-radius: 16px !important;
+  background: var(--bg-secondary) !important;
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border) !important;
+  border-radius: 20px !important;
+  box-shadow: var(--shadow-card);
 }
 
 ::ng-deep .mat-mdc-form-field-flex {
-  background-color: rgba(15, 23, 42, 0.3) !important;
+  background-color: var(--bg-secondary) !important;
 }
 
 ::ng-deep .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__leading,
 ::ng-deep .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__notch,
 ::ng-deep .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__trailing {
-  border-color: rgba(255, 255, 255, 0.15) !important;
+  border-color: var(--border) !important;
 }
 
 ::ng-deep .mdc-text-field--outlined:not(.mdc-text-field--disabled):hover .mdc-notched-outline__leading,
 ::ng-deep .mdc-text-field--outlined:not(.mdc-text-field--disabled):hover .mdc-notched-outline__notch,
 ::ng-deep .mdc-text-field--outlined:not(.mdc-text-field--disabled):hover .mdc-notched-outline__trailing {
-  border-color: rgba(129, 140, 248, 0.5) !important;
+  border-color: var(--primary-bg) !important;
 }
 
 ::ng-deep .mdc-text-field--outlined:not(.mdc-text-field--disabled).mdc-text-field--focused .mdc-notched-outline__leading,
 ::ng-deep .mdc-text-field--outlined:not(.mdc-text-field--disabled).mdc-text-field--focused .mdc-notched-outline__notch,
 ::ng-deep .mdc-text-field--outlined:not(.mdc-text-field--disabled).mdc-text-field--focused .mdc-notched-outline__trailing {
-  border-color: #4f46e5 !important;
+  border-color: var(--primary) !important;
 }
 
 ::ng-deep .mat-mdc-form-field-label-wrapper label,
 ::ng-deep .mat-mdc-input-element::placeholder {
-  color: #94a3b8 !important;
+  color: var(--text-muted) !important;
 }
 
 ::ng-deep .mat-mdc-input-element, ::ng-deep .mat-mdc-select-value {
-  color: #f8fafc !important;
+  color: var(--text-primary) !important;
 }
 
 .remote-checkbox {
-  color: #94a3b8;
+  color: var(--text-muted);
 }
 
 ::ng-deep .mdc-checkbox .mdc-checkbox__background {
-  border-color: rgba(255, 255, 255, 0.3) !important;
+  border-color: var(--border) !important;
 }
 
 .search-btn {
-  background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%) !important;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%) !important;
   color: white !important;
-  font-weight: 600 !important;
-  border-radius: 8px !important;
-  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3) !important;
-  transition: all 0.3s ease !important;
+  font-weight: 700 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4) !important;
+  transition: all 0.2s ease !important;
+  padding: 0 32px;
 }
 
 .search-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.5) !important;
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.5) !important;
 }
 
 .progress-container {
-  background-color: rgba(15, 23, 42, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 16px;
 }
 
 .progress-bar {
   height: 8px !important;
-  border-radius: 4px;
+  border-radius: 9999px;
 }
 
 .text-indigo {
-  color: #818cf8;
+  color: var(--primary-light);
 }
 
 .error-banner {
-  background-color: rgba(239, 68, 68, 0.15);
+  background-color: var(--accent-red-bg);
   border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 12px;
 }
 
 .error-text {
-  color: #fca5a5;
-  font-size: 0.85rem;
+  color: #fecaca;
+  font-size: 0.9rem;
 }
 
 /* Orbit Spinner Animation */
@@ -171,8 +178,8 @@
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  border-left: 3px solid #818cf8;
-  border-top: 3px solid #818cf8;
+  border-left: 3px solid var(--primary-light);
+  border-top: 3px solid var(--primary-light);
   animation: orbit-one 1.2s linear infinite;
 }
 
@@ -182,8 +189,8 @@
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  border-right: 3px solid #4f46e5;
-  border-top: 3px solid #4f46e5;
+  border-right: 3px solid var(--primary);
+  border-top: 3px solid var(--primary);
   animation: orbit-two 1.2s linear infinite;
 }
 
@@ -193,8 +200,8 @@
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  border-right: 3px solid #10b981;
-  border-bottom: 3px solid #10b981;
+  border-right: 3px solid var(--accent-green);
+  border-bottom: 3px solid var(--accent-green);
   animation: orbit-three 1.2s linear infinite;
 }
 
@@ -226,27 +233,32 @@
 }
 
 .pipeline-metric {
-  background-color: rgba(15, 23, 42, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
 }
 
 .pipeline-metric-val {
-  font-weight: 700;
-  color: #818cf8;
-  font-size: 1rem;
+  font-weight: 800;
+  color: var(--primary);
+  font-size: 1.1rem;
 }
 
 .pipeline-step-row {
-  background-color: rgba(15, 23, 42, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.04);
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 10px;
   font-size: 0.9rem;
+  padding: 12px 16px;
 }
 
 .pipeline-step-row.step-active {
-  border-color: rgba(129, 140, 248, 0.4);
-  background-color: rgba(79, 70, 229, 0.1);
+  border-color: var(--primary-bg);
+  background-color: var(--primary-bg);
+  color: var(--primary-light);
 }
 
 .pipeline-step-row.step-done {
-  color: #10b981;
+  color: var(--accent-green);
 }

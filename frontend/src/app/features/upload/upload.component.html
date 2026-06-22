@@ -46,31 +46,20 @@
           </div>
         </mat-card>
 
-        <!-- Uploading / Progress Card -->
+        <!-- Uploading (max ~3s before switching to parsing state) -->
         <mat-card class="glass-card p-5 text-center" *ngIf="uploading">
-          <div class="spinner-wrapper mb-4">
-            <div class="spinner-grow text-primary" role="status" style="width: 3rem; height: 3rem;">
-              <span class="visually-hidden">Loading...</span>
-            </div>
-          </div>
-          <h4 class="mb-3">Uploading CV file...</h4>
+          <h4 class="mb-3">{{ statusMessage || 'Uploading...' }}</h4>
           <mat-progress-bar mode="determinate" [value]="uploadProgress" class="progress-bar mb-3"></mat-progress-bar>
           <span class="text-muted">{{ uploadProgress }}% uploaded</span>
         </mat-card>
 
-        <!-- Parsing progress checklist -->
-        <mat-card class="glass-card p-5" *ngIf="parsing">
-          <h4 class="mb-4 text-center">Parsing your CV...</h4>
-          <div class="parsing-steps d-flex flex-column gap-3 mb-4">
-            <div *ngFor="let step of parsingSteps" class="step-row d-flex align-items-center justify-content-between p-3 rounded">
-              <span class="step-label" [class.step-done-text]="step.status === 'done'">{{ step.label }}</span>
-              <div class="step-status">
-                <span class="status-badge done" *ngIf="step.status === 'done'"><i class="bi bi-check-circle-fill"></i></span>
-                <span class="status-badge active" *ngIf="step.status === 'active'"><div class="spinner-border spinner-border-sm text-primary"></div></span>
-                <span class="status-badge pending text-muted" *ngIf="step.status === 'pending'"><i class="bi bi-circle"></i></span>
-              </div>
-            </div>
+        <!-- Parsing (server-side: extract text → Gemini → structure) -->
+        <mat-card class="glass-card p-5 text-center" *ngIf="parsing">
+          <div class="spinner-wrapper mb-3">
+            <div class="spinner-border text-primary" role="status"></div>
           </div>
+          <h4 class="mb-2">{{ statusMessage || 'Parsing your CV...' }}</h4>
+          <p class="text-muted small mb-3">Extracting text → structuring skills, experience & projects</p>
           <mat-progress-bar mode="indeterminate" class="progress-bar"></mat-progress-bar>
         </mat-card>
 
@@ -80,8 +69,8 @@
             <i class="bi bi-check-all success-icon"></i>
           </div>
           
-          <h3 class="mb-2">CV Structured Successfully!</h3>
-          <p class="text-muted mb-4">Review the reasoning profile parsed from your resume:</p>
+          <h3 class="mb-2">CV Ready!</h3>
+          <p class="text-muted mb-4">Your profile is parsed. Start a job search when you're ready.</p>
           
           <div class="profile-summary-box p-4 rounded mb-5 text-start">
             <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom border-secondary">

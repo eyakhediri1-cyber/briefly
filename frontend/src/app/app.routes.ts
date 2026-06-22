@@ -8,6 +8,7 @@ export const routes: Routes = [
   { path: 'upload', loadComponent: () => import('./features/upload/upload.component').then(m => m.UploadComponent), canActivate: [AuthGuard] },
   { path: 'search', loadComponent: () => import('./features/search/search.component').then(m => m.SearchComponent), canActivate: [AuthGuard] },
   { path: 'strategy/:sessionId', loadComponent: () => import('./features/strategy/strategy.component').then(m => m.StrategyComponent), canActivate: [AuthGuard] },
+  { path: 'results/:sessionId', loadComponent: () => import('./features/job-results/job-results.component').then(m => m.JobResultsComponent), canActivate: [AuthGuard] },
   { path: 'job/:jobId/fit', loadComponent: () => import('./features/job-detail/job-detail.component').then(m => m.JobDetailComponent), canActivate: [AuthGuard] },
   { path: 'tailor/:jobId', loadComponent: () => import('./features/cv-tailoring/cv-tailoring.component').then(m => m.CVTailoringComponent), canActivate: [AuthGuard] },
 ];

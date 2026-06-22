@@ -11,11 +11,6 @@ import { ApiService } from '../../core/services/api.service';
 import { AuthService } from '../../core/services/auth.service';
 import { CVUploadResponse, ProfileMetric } from '../../core/models';
 
-interface ParsingStep {
-  label: string;
-  status: 'pending' | 'active' | 'done';
-}
-
 @Component({
   selector: 'app-upload',
   standalone: true,
@@ -34,19 +29,14 @@ interface ParsingStep {
 export class UploadComponent {
   dragOver = false;
   uploading = false;
-  uploadProgress = 0;
   parsing = false;
+  uploadProgress = 0;
   uploadError = '';
-
-  parsingSteps: ParsingStep[] = [
-    { label: 'Uploading file...', status: 'pending' },
-    { label: 'Extracting text from PDF...', status: 'pending' },
-    { label: 'Structuring profile with AI...', status: 'pending' },
-    { label: 'Generating embeddings & FAISS index...', status: 'pending' }
-  ];
-
   parsedProfileSummary: CVUploadResponse['profile_summary'] | null = null;
   profileMetrics: ProfileMetric[] = [];
+  statusMessage = '';
+
+  private uploadCapTimer?: ReturnType<typeof setTimeout>;
 
   constructor(
     private apiService: ApiService,
@@ -67,14 +57,15 @@ export class UploadComponent {
   onDrop(event: DragEvent): void {
     event.preventDefault();
     this.dragOver = false;
-    if (event.dataTransfer?.files && event.dataTransfer.files.length > 0) {
+    if (event.dataTransfer?.files?.length) {
       this.handleFile(event.dataTransfer.files[0]);
     }
   }
 
-  onFileSelected(event: any): void {
-    if (event.target.files && event.target.files.length > 0) {
-      this.handleFile(event.target.files[0]);
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files?.length) {
+      this.handleFile(input.files[0]);
     }
   }
 
@@ -83,33 +74,46 @@ export class UploadComponent {
       this.uploadError = 'Only PDF files are supported.';
       return;
     }
-
     if (file.size > 5 * 1024 * 1024) {
       this.uploadError = 'File size exceeds the 5MB limit.';
       return;
     }
 
+    this.clearUploadTimer();
     this.uploadError = '';
     this.uploading = true;
-    this.uploadProgress = 0;
     this.parsing = false;
+    this.uploadProgress = 0;
     this.parsedProfileSummary = null;
     this.profileMetrics = [];
-    this.resetParsingSteps();
+    this.statusMessage = 'Uploading...';
+
+    // Cap "Uploading..." UI at 3 seconds, then show parsing state
+    this.uploadCapTimer = setTimeout(() => {
+      if (this.uploading) {
+        this.uploading = false;
+        this.parsing = true;
+        this.statusMessage = 'Extracting text & structuring profile...';
+      }
+    }, 3000);
+
+    console.log('[Brieflyy] CV upload started:', file.name, file.size);
 
     this.apiService.uploadCV(file).subscribe({
       next: (event: HttpEvent<CVUploadResponse>) => {
         if (event.type === HttpEventType.UploadProgress) {
           this.uploadProgress = Math.round((100 * event.loaded) / (event.total || 100));
-        } else if (event.type === HttpEventType.Response) {
-          console.log('[Brieflyy] CV upload response:', event.body);
+        } else if (event.type === HttpEventType.Response && event.body) {
+          console.log('[Brieflyy] CV parse complete:', event.body);
+          this.clearUploadTimer();
           this.uploading = false;
-          this.parsing = true;
-          this.completeParsingSteps(event.body!);
+          this.parsing = false;
+          this.showResults(event.body);
         }
       },
       error: (err) => {
         console.error('[Brieflyy] CV upload error:', err);
+        this.clearUploadTimer();
         this.uploading = false;
         this.parsing = false;
         this.uploadError = err.error?.detail || err.message || 'Failed to upload CV. Please try again.';
@@ -117,49 +121,30 @@ export class UploadComponent {
     });
   }
 
-  private resetParsingSteps(): void {
-    this.parsingSteps = this.parsingSteps.map(s => ({ ...s, status: 'pending' as const }));
+  private showResults(response: CVUploadResponse): void {
+    this.parsedProfileSummary = response.profile_summary;
+    this.profileMetrics = this.buildMetrics(response);
+    this.statusMessage = '';
   }
 
-  private completeParsingSteps(response: CVUploadResponse): void {
-    // Backend already parsed — animate steps quickly to show what happened
-    this.parsingSteps[0].status = 'done';
-    this.parsingSteps[1].status = 'active';
-
-    setTimeout(() => {
-      this.parsingSteps[1].status = 'done';
-      this.parsingSteps[2].status = 'active';
-
-      setTimeout(() => {
-        this.parsingSteps[2].status = 'done';
-        this.parsingSteps[3].status = 'active';
-
-        setTimeout(() => {
-          this.parsingSteps[3].status = 'done';
-          this.parsing = false;
-          this.parsedProfileSummary = response.profile_summary;
-          this.profileMetrics = this.buildMetrics(response);
-          console.log('[Brieflyy] Profile metrics:', this.profileMetrics);
-        }, 400);
-      }, 400);
-    }, 400);
+  private clearUploadTimer(): void {
+    if (this.uploadCapTimer) {
+      clearTimeout(this.uploadCapTimer);
+      this.uploadCapTimer = undefined;
+    }
   }
 
   private buildMetrics(response: CVUploadResponse): ProfileMetric[] {
-    if (response.metrics && response.metrics.length > 0) {
+    if (response.metrics?.length) {
       return response.metrics;
     }
-
     const s = response.profile_summary;
-    const candidates: ProfileMetric[] = [
+    return [
       { label: 'Skills', count: s.skills_count, icon: 'bi-tools' },
       { label: 'Experience', count: s.experience_count, icon: 'bi-briefcase' },
       { label: 'Projects', count: s.projects_count, icon: 'bi-folder' },
       { label: 'Education', count: s.education_count, icon: 'bi-mortarboard' },
-      { label: 'Certifications', count: s.certifications_count || 0, icon: 'bi-award' },
-      { label: 'Languages', count: s.languages_count || 0, icon: 'bi-translate' },
-    ];
-    return candidates.filter(m => m.count > 0);
+    ].filter(m => m.count > 0);
   }
 
   logout(): void {

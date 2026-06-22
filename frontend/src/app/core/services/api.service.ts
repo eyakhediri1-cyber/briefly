@@ -13,6 +13,8 @@ import {
   FitAnalysisResponse,
   TailoredCVResponse,
   ApproveChangesResponse,
+  JobResultsResponse,
+  ApplicationSubmitResponse,
 } from '../models';
 
 @Injectable({
@@ -58,6 +60,10 @@ export class ApiService {
   }
 
   // Jobs Methods
+  getJobResults(sessionId: string): Observable<JobResultsResponse> {
+    return this.http.get<JobResultsResponse>(`${this.baseUrl}/jobs/results/${sessionId}`);
+  }
+
   getJobs(sessionId: string): Observable<JobWithFit[]> {
     return this.http.get<JobWithFit[]>(`${this.baseUrl}/jobs/${sessionId}`);
   }
@@ -79,5 +85,15 @@ export class ApiService {
 
   getCVDownloadUrl(jobId: string): string {
     return `${this.baseUrl}/tailor/${jobId}/download`;
+  }
+
+  getCVPreview(jobId: string): Observable<TailoredCVResponse> {
+    return this.http.get<TailoredCVResponse>(`${this.baseUrl}/tailor/${jobId}/preview`);
+  }
+
+  submitApplication(jobId: string): Observable<ApplicationSubmitResponse> {
+    return this.http.post<ApplicationSubmitResponse>(`${this.baseUrl}/apply/${jobId}`, {
+      confirm_cv: true
+    });
   }
 }

@@ -165,3 +165,47 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
+
+.full-cv-doc .section-heading {
+  color: #a5b4fc;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.full-cv-doc .section-content {
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: #cbd5e1;
+  white-space: pre-wrap;
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.btn-apply {
+  background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%) !important;
+  color: white !important;
+  font-weight: 700 !important;
+  border-radius: 12px !important;
+  transition: all 0.3s ease !important;
+}
+
+.btn-apply:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.5) !important;
+}
+
+/* Download PDF button hover effect */
+[mat-stroked-button] {
+  font-weight: 600 !important;
+  border-radius: 12px !important;
+  transition: all 0.3s ease !important;
+  border-color: rgba(129, 140, 248, 0.3) !important;
+  color: #818cf8 !important;
+}
+
+[mat-stroked-button]:hover {
+  background-color: rgba(79, 70, 229, 0.15) !important;
+  border-color: rgba(129, 140, 248, 0.6) !important;
+  transform: translateY(-2px) !important;
+}

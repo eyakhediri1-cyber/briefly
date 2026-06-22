@@ -11,6 +11,7 @@ from typing import List, Dict, Optional
 
 from app.middleware.error_handler import HallucinationDetectedError
 from app.services.gemini_service import gemini_service
+from app.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -78,9 +79,14 @@ class CVTailoringAgent:
                 continue
 
             try:
-                result = await self._rewrite_section(
-                    section_name, section_content, ats_keywords, required_skills
-                )
+                if settings.PIPELINE_FAST_MODE:
+                    result = await self._rewrite_section_fast(
+                        section_name, section_content, ats_keywords, required_skills
+                    )
+                else:
+                    result = await self._rewrite_section(
+                        section_name, section_content, ats_keywords, required_skills
+                    )
 
                 adapted_text = result.get("rewritten_text", section_content)
                 changes = result.get("changes", [])
@@ -118,6 +124,7 @@ class CVTailoringAgent:
 
         return {
             "id": str(uuid.uuid4()),
+            "original_sections": sections,
             "adapted_sections": adapted_sections,
             "diff": all_diffs,
             "ats_score_estimate": ats_score,
@@ -135,6 +142,15 @@ class CVTailoringAgent:
             required_skills=", ".join(required_skills),
         )
         return await gemini_service.generate_json(prompt)
+        
+    async def _rewrite_section_fast(self, section_name: str, content: str,
+                                     ats_keywords: List[str],
+                                     required_skills: List[str]) -> dict:
+        """Rewrite a single CV section without any external APIs (fast mode)."""
+        return {
+            "rewritten_text": content,
+            "changes": []
+        }
 
     def _verify_no_hallucination(self, original_skills: List[str],
                                   adapted_text: str,

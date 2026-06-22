@@ -3,6 +3,7 @@
 import logging
 from typing import List
 
+from app.services.feed_cache import get_or_fetch_feed
 from app.services.integrations.base import IntegrationResult, JobSourceIntegration, SearchParams
 from app.services.integrations.http_client import get_http_client
 from app.utils.job_normalizer import filter_jobs, normalize_job
@@ -12,19 +13,21 @@ logger = logging.getLogger(__name__)
 
 class RemoteOKIntegration(JobSourceIntegration):
     name = "remoteok"
-    rate_limit_per_minute = 10  # API docs recommend conservative usage
+    rate_limit_per_minute = 10
+
+    async def _fetch_feed(self) -> list:
+        client = await get_http_client()
+        response = await client.get(
+            "https://remoteok.com/api",
+            headers={"User-Agent": "Brieflyy/1.0"},
+        )
+        response.raise_for_status()
+        logger.info("RemoteOK API: status=%d body_len=%d", response.status_code, len(response.text))
+        return response.json()
 
     async def search(self, params: SearchParams) -> IntegrationResult:
         try:
-            client = await get_http_client()
-            # Official endpoint; tag filter via query when supported
-            response = await client.get(
-                "https://remoteok.com/api",
-                headers={"User-Agent": "Brieflyy/1.0"},
-            )
-            response.raise_for_status()
-            data = response.json()
-
+            data = await get_or_fetch_feed(self.name, self._fetch_feed)
             jobs: List[dict] = []
             for item in data:
                 if not isinstance(item, dict) or "position" not in item:
@@ -43,17 +46,18 @@ class RemoteOKIntegration(JobSourceIntegration):
                 }
                 jobs.append(normalize_job(raw, self.name))
 
-            jobs = filter_jobs(
-                jobs,
-                query=params.query,
-                location=params.location,
-                contract_type=params.contract_type,
-                remote=params.remote if params.remote is not None else True,
-            )
+            raw_count = len(jobs)
+            # Return all jobs fetched from the feed — do not pre-filter by
+            # query here. Let the aggregator / fit-analyzer handle scoring and
+            # filtering so we don't inadvertently drop many results.
+            logger.info("API RemoteOK fetched %d jobs (no pre-filter)", raw_count)
+            print(f"[Brieflyy] API RemoteOK fetched {raw_count} jobs", flush=True)
 
-            logger.info("RemoteOK: %d jobs matched '%s'", len(jobs), params.query)
-            return IntegrationResult(source=self.name, jobs=jobs[: params.max_results])
+            result = IntegrationResult(source=self.name, jobs=jobs[: params.max_results])
+            result.raw_count = raw_count
+            return result
 
         except Exception as e:
-            logger.error("RemoteOK integration failed: %s", e)
+            logger.error("API RemoteOK FAILED: %s", e)
+            print(f"[Brieflyy] API RemoteOK FAILED: {e}", flush=True)
             return IntegrationResult(source=self.name, jobs=[], error=str(e))

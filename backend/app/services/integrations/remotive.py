@@ -27,6 +27,12 @@ class RemotiveIntegration(JobSourceIntegration):
             )
             response.raise_for_status()
             data = response.json()
+            logger.info(
+                "Remotive API: status=%d body_len=%d search=%r",
+                response.status_code,
+                len(response.text),
+                params.query,
+            )
 
             jobs: List[dict] = []
             for item in data.get("jobs", []):
@@ -44,9 +50,14 @@ class RemotiveIntegration(JobSourceIntegration):
                 }
                 jobs.append(normalize_job(raw, self.name))
 
-            logger.info("Remotive: %d jobs for '%s'", len(jobs), params.query)
-            return IntegrationResult(source=self.name, jobs=jobs[: params.max_results])
+            raw_count = len(jobs)
+            logger.info("API Remotive returned %d jobs for '%s'", len(jobs), params.query)
+            print(f"[Brieflyy] API Remotive returned {len(jobs)} jobs", flush=True)
+            result = IntegrationResult(source=self.name, jobs=jobs[: params.max_results])
+            result.raw_count = raw_count
+            return result
 
         except Exception as e:
-            logger.error("Remotive integration failed: %s", e)
+            logger.error("API Remotive FAILED: %s", e)
+            print(f"[Brieflyy] API Remotive FAILED: {e}", flush=True)
             return IntegrationResult(source=self.name, jobs=[], error=str(e))

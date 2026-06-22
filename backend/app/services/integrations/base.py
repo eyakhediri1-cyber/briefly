@@ -25,6 +25,7 @@ class IntegrationResult:
     error: Optional[str] = None
     from_cache: bool = False
     elapsed_ms: int = 0
+    raw_count: int = 0
 
 
 class JobSourceIntegration(ABC):

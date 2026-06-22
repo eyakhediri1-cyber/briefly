@@ -20,3 +20,4 @@ class User(Base):
     cv_profiles = relationship("CVProfile", back_populates="user", cascade="all, delete-orphan")
     sessions = relationship("JobSearchSession", back_populates="user", cascade="all, delete-orphan")
     tailored_cvs = relationship("TailoredCV", back_populates="user", cascade="all, delete-orphan")
+    job_applications = relationship("JobApplication", back_populates="user", cascade="all, delete-orphan")

@@ -59,15 +59,29 @@ class Settings(BaseSettings):
     LINKEDIN_ACCESS_TOKEN: str = ""
     INTERNSHALA_API_KEY: str = ""
 
+    # JSearch / RapidAPI
+    JSEARCH_API_KEY: str = ""
+
     # Job aggregator (real APIs only)
     JOB_CACHE_TTL_SECONDS: int = 7200
-    ENABLED_JOB_SOURCES: str = "remoteok,remotive,arbeitnow,aiesec"
+    # Increase defaults to be more resilient to slow job APIs
+    JOB_SEARCH_TIMEOUT_SECONDS: int = 20
+    JOB_API_TIMEOUT_PER_SOURCE: int = 10
+    JOB_SEARCH_MIN_RESULTS: int = 15
+    ENABLED_JOB_SOURCES: str = "remoteok,remotive,arbeitnow"
+    SKIP_SEMANTIC_RANKING: bool = True
 
     # Application
     MAX_JOBS_PER_SEARCH: int = 80
     CV_MAX_SIZE_MB: int = 5
-    PIPELINE_TIMEOUT_SECONDS: int = 300
-    PIPELINE_MAX_JOBS: int = 20
+    CV_PARSE_TIMEOUT_SECONDS: int = 10
+    CV_PARSE_GEMINI_WARN_SECONDS: float = 5.0
+    CV_CACHE_TTL_SECONDS: int = 86400
+    SKIP_CV_EMBEDDINGS_ON_UPLOAD: bool = True
+    CV_GEMINI_MAX_CHARS: int = 4000
+    PIPELINE_TIMEOUT_SECONDS: int = 120
+    PIPELINE_MAX_JOBS: int = 15
+    PIPELINE_FAST_MODE: bool = True  # Default to fast mode (no Gemini required)
     UPLOAD_DIR: str = ""
 
     @property

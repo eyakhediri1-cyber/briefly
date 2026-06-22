@@ -67,16 +67,14 @@ class AIESECIntegration(JobSourceIntegration):
                 }
                 jobs.append(normalize_job(raw, self.name))
 
-            jobs = filter_jobs(
-                jobs,
-                query=params.query,
-                location=params.location,
-                contract_type=params.contract_type or "internship",
-            )
-
-            logger.info("AIESEC: %d opportunities for '%s'", len(jobs), params.query)
-            return IntegrationResult(source=self.name, jobs=jobs[: params.max_results])
+            raw_count = len(jobs)
+            logger.info("API AIESEC fetched %d jobs (no pre-filter)", raw_count)
+            print(f"[Brieflyy] API AIESEC fetched {raw_count} jobs", flush=True)
+            result = IntegrationResult(source=self.name, jobs=jobs[: params.max_results])
+            result.raw_count = raw_count
+            return result
 
         except Exception as e:
-            logger.warning("AIESEC integration unavailable: %s", e)
+            logger.warning("API AIESEC FAILED: %s", e)
+            print(f"[Brieflyy] API AIESEC FAILED: {e}", flush=True)
             return IntegrationResult(source=self.name, jobs=[], error=str(e))

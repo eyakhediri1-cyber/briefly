@@ -50,11 +50,10 @@ export class SearchComponent implements OnInit, OnDestroy {
   currentAgent = '';
 
   pipelineSteps: PipelineStep[] = [
-    { key: 'PENDING', label: 'Initializing pipeline...', status: 'pending' },
+    { key: 'PENDING', label: 'Starting search...', status: 'pending' },
     { key: 'AGENT_2_RUNNING', label: 'Searching job boards...', status: 'pending' },
-    { key: 'AGENT_3_RUNNING', label: 'Analyzing job requirements...', status: 'pending' },
-    { key: 'AGENT_4_RUNNING', label: 'Computing fit scores...', status: 'pending' },
-    { key: 'AGENT_5_RUNNING', label: 'Building your strategy...', status: 'pending' },
+    { key: 'AGENT_3_RUNNING', label: 'Analyzing & scoring matches...', status: 'pending' },
+    { key: 'AGENT_6_RUNNING', label: 'Tailoring CVs for each job...', status: 'pending' },
   ];
 
   private pollSubscription?: Subscription;
@@ -68,7 +67,7 @@ export class SearchComponent implements OnInit, OnDestroy {
     this.searchForm = this.fb.group({
       target_role: ['', Validators.required],
       location: [''],
-      contract_type: ['internship'],
+      contract_type: [''],
       remote: [false]
     });
   }
@@ -100,6 +99,8 @@ export class SearchComponent implements OnInit, OnDestroy {
         console.log('[Brieflyy] Search started:', res);
         this.sessionId = String(res.session_id);
         this.startPollingStatus();
+        // Navigate immediately to the results page so the dashboard can show loading state
+        this.router.navigate(['/results', this.sessionId]);
       },
       error: (err) => {
         console.error('[Brieflyy] Search start error:', err);
@@ -110,7 +111,7 @@ export class SearchComponent implements OnInit, OnDestroy {
   }
 
   startPollingStatus(): void {
-    this.pollSubscription = interval(1500)
+    this.pollSubscription = interval(800)
       .pipe(
         switchMap(() => this.apiService.getSearchStatus(this.sessionId)),
         takeWhile(status => status.status !== 'COMPLETED' && status.status !== 'FAILED', true)
@@ -126,15 +127,13 @@ export class SearchComponent implements OnInit, OnDestroy {
 
             if (status.jobs_found === 0) {
               this.searching = false;
-              this.noResultsMessage = 'No matches found. Try different keywords or locations.';
+              this.noResultsMessage = 'No matches. Try different keywords.';
               this.progressStep = this.noResultsMessage;
               return;
             }
 
-            this.progressStep = status.current_step || 'Strategy plan generated!';
-            setTimeout(() => {
-              this.router.navigate([`/strategy/${this.sessionId}`]);
-            }, 1000);
+            this.searching = false;
+            this.router.navigate([`/results/${this.sessionId}`]);
           } else if (status.status === 'FAILED') {
             this.searching = false;
             this.searchError = status.current_step || 'Agent pipeline failed. Please try again.';
@@ -161,9 +160,8 @@ export class SearchComponent implements OnInit, OnDestroy {
     const messages: Record<string, string> = {
       PENDING: 'Starting agent pipeline...',
       AGENT_2_RUNNING: 'Searching job boards...',
-      AGENT_3_RUNNING: 'Analyzing job requirements...',
-      AGENT_4_RUNNING: 'Computing your fit scores...',
-      AGENT_5_RUNNING: 'Building your personalized strategy...',
+      AGENT_3_RUNNING: 'Analyzing & scoring matches...',
+      AGENT_6_RUNNING: 'Tailoring your CV for each job...',
       COMPLETED: 'Done!',
       FAILED: 'Pipeline failed',
     };
@@ -175,7 +173,7 @@ export class SearchComponent implements OnInit, OnDestroy {
   }
 
   private updatePipelineSteps(currentStatus: string): void {
-    const order = ['PENDING', 'AGENT_2_RUNNING', 'AGENT_3_RUNNING', 'AGENT_4_RUNNING', 'AGENT_5_RUNNING'];
+    const order = ['PENDING', 'AGENT_2_RUNNING', 'AGENT_3_RUNNING', 'AGENT_6_RUNNING'];
     const currentIdx = order.indexOf(currentStatus);
 
     this.pipelineSteps = this.pipelineSteps.map((step, idx) => {

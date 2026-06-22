@@ -100,7 +100,7 @@ export interface SearchFilters {
 }
 
 export interface SearchStatusResponse {
-  status: 'PENDING' | 'AGENT_2_RUNNING' | 'AGENT_3_RUNNING' | 'AGENT_4_RUNNING' | 'AGENT_5_RUNNING' | 'COMPLETED' | 'FAILED';
+  status: 'PENDING' | 'AGENT_2_RUNNING' | 'AGENT_3_RUNNING' | 'AGENT_4_RUNNING' | 'AGENT_5_RUNNING' | 'AGENT_6_RUNNING' | 'COMPLETED' | 'FAILED';
   progress_percent: number;
   current_step?: string;
   current_agent?: string;
@@ -167,6 +167,38 @@ export interface JobSearchStrategyResponse {
   total_jobs_analyzed?: number;
 }
 
+export interface KeyChangePreview {
+  section: string;
+  change_type: string;
+  original_text?: string;
+  adapted_text?: string;
+  reason?: string;
+}
+
+export interface TailoredCVPreview {
+  tailored_cv_id?: string;
+  preview_snippet: string;
+  emphasized_skills: string[];
+  highlighted_projects: string[];
+  key_changes: KeyChangePreview[];
+  ats_score_estimate: number;
+  pending_approval: boolean;
+  tailoring_status: 'pending' | 'ready' | 'failed';
+}
+
+export interface JobWithTailoredPreview extends JobWithFit {
+  tailored_preview: TailoredCVPreview;
+  application_status?: string;
+  applied_at?: string;
+}
+
+export interface JobResultsResponse {
+  session_id: string;
+  jobs: JobWithTailoredPreview[];
+  total_jobs_found: number;
+  total_tailored: number;
+}
+
 export interface DiffEntry {
   section: string;
   change_type: 'REORDERED' | 'REPHRASED' | 'KEYWORD_ADDED' | 'STRENGTHENED';
@@ -180,10 +212,26 @@ export interface TailoredCVResponse {
   job_posting_id: string;
   original_cv_id: string;
   adapted_sections: Record<string, string>;
+  original_sections?: Record<string, string>;
   diff: DiffEntry[];
   ats_score_estimate: number;
   pending_approval: boolean;
   approved_at?: string;
+  preview_snippet?: string;
+  emphasized_skills?: string[];
+  highlighted_projects?: string[];
+  key_changes?: KeyChangePreview[];
+}
+
+export interface ApplicationSubmitResponse {
+  application_id: string;
+  job_posting_id: string;
+  tailored_cv_id: string;
+  job_title: string;
+  company: string;
+  applied_at: string;
+  status: string;
+  message: string;
 }
 
 export interface ApproveChangesResponse {

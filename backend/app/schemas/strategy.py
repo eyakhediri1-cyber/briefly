@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from uuid import UUID
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 from pydantic import BaseModel
 from app.schemas.job import JobWithFit
 
@@ -19,6 +19,38 @@ class DiffEntry(BaseModel):
     original_text: str
     adapted_text: str
     reason: str
+
+
+class KeyChangePreview(BaseModel):
+    section: str
+    change_type: str
+    original_text: str = ""
+    adapted_text: str = ""
+    reason: str = ""
+
+
+class TailoredCVPreview(BaseModel):
+    tailored_cv_id: Optional[UUID] = None
+    preview_snippet: str = ""
+    emphasized_skills: List[str] = []
+    highlighted_projects: List[str] = []
+    key_changes: List[KeyChangePreview] = []
+    ats_score_estimate: int = 0
+    pending_approval: bool = True
+    tailoring_status: str = "pending"  # pending | ready | failed
+
+
+class JobWithTailoredPreview(JobWithFit):
+    tailored_preview: TailoredCVPreview = TailoredCVPreview()
+    application_status: Optional[str] = None
+    applied_at: Optional[datetime] = None
+
+
+class JobResultsResponse(BaseModel):
+    session_id: UUID
+    jobs: List[JobWithTailoredPreview] = []
+    total_jobs_found: int = 0
+    total_tailored: int = 0
 
 
 class JobSearchStrategyResponse(BaseModel):
@@ -46,13 +78,33 @@ class TailoredCVResponse(BaseModel):
     job_posting_id: UUID
     original_cv_id: UUID
     adapted_sections: dict
+    original_sections: dict = {}
     diff: List[DiffEntry]
     ats_score_estimate: int = 0
     pending_approval: bool = True
     approved_at: Optional[datetime] = None
+    preview_snippet: str = ""
+    emphasized_skills: List[str] = []
+    highlighted_projects: List[str] = []
+    key_changes: List[KeyChangePreview] = []
 
     class Config:
         from_attributes = True
+
+
+class ApplicationSubmitRequest(BaseModel):
+    confirm_cv: bool = False
+
+
+class ApplicationSubmitResponse(BaseModel):
+    application_id: UUID
+    job_posting_id: UUID
+    tailored_cv_id: UUID
+    job_title: str
+    company: str
+    applied_at: datetime
+    status: str
+    message: str
 
 
 class ApproveChangesRequest(BaseModel):

@@ -2,7 +2,7 @@
 
 import re
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 from app.schemas.job import RawJobPosting
@@ -30,14 +30,30 @@ def _clean_html(text: str) -> str:
 
 
 def _parse_datetime(value: Any) -> Optional[datetime]:
+    """Parse various datetime inputs and return a naive UTC datetime.
+
+    - If `value` is None or can't be parsed, return current UTC (naive).
+    - If `value` is timezone-aware, convert to UTC and strip tzinfo (naive).
+    - If `value` is naive, assume it's already UTC and return as-is.
+    """
     if not value:
-        return None
+        return datetime.now(timezone.utc).replace(tzinfo=None)
+
     if isinstance(value, datetime):
-        return value
-    try:
-        return datetime.fromisoformat(str(value).replace("Z", "+00:00"))
-    except (ValueError, TypeError):
-        return None
+        dt = value
+    else:
+        try:
+            # Support ISO strings with Z or offsets
+            dt = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+        except (ValueError, TypeError):
+            return datetime.now(timezone.utc).replace(tzinfo=None)
+
+    # If timezone-aware, convert to UTC and drop tzinfo to make it naive
+    if dt.tzinfo is not None:
+        return dt.astimezone(timezone.utc).replace(tzinfo=None)
+
+    # Assume naive datetimes are already UTC
+    return dt
 
 
 def normalize_job(raw: Dict[str, Any], source: str) -> Dict[str, Any]:
@@ -132,6 +148,24 @@ def dedupe_key(job: Dict[str, Any]) -> tuple:
     )
 
 
+def _query_terms(query: str) -> List[str]:
+    """Extract searchable terms; include single broad role words like 'developer'."""
+    terms = [t.lower() for t in query.split() if len(t) > 2]
+    broad = {"developer", "engineer", "designer", "analyst", "manager", "intern"}
+    for word in query.lower().split():
+        if word in broad and word not in terms:
+            terms.append(word)
+    return terms
+
+
+def _matches_contract_type(haystack: str, contract_type: str, job: Dict[str, Any]) -> bool:
+    ct = contract_type.lower()
+    if ct == "internship":
+        entry_markers = ("intern", "graduate", "junior", "entry", "trainee", "placement", "co-op", "coop")
+        return any(marker in haystack for marker in entry_markers)
+    return ct in haystack or ct in (job.get("contract_type") or "").lower()
+
+
 def filter_jobs(
     jobs: List[Dict[str, Any]],
     *,
@@ -139,9 +173,10 @@ def filter_jobs(
     location: Optional[str] = None,
     contract_type: Optional[str] = None,
     remote: Optional[bool] = None,
+    strict: bool = True,
 ) -> List[Dict[str, Any]]:
     """Client-side filter when APIs lack native filtering."""
-    query_terms = [t.lower() for t in query.split() if len(t) > 2]
+    query_terms = _query_terms(query)
     filtered = []
 
     for job in jobs:
@@ -163,12 +198,8 @@ def filter_jobs(
             if loc not in job_loc and not job.get("remote"):
                 continue
 
-        if contract_type:
-            ct = contract_type.lower()
-            if ct == "internship":
-                if "intern" not in haystack:
-                    continue
-            elif ct not in haystack and ct not in (job.get("contract_type") or "").lower():
+        if contract_type and strict:
+            if not _matches_contract_type(haystack, contract_type, job):
                 continue
 
         if remote is True and not job.get("remote"):
@@ -179,3 +210,54 @@ def filter_jobs(
         filtered.append(job)
 
     return filtered
+
+
+def filter_jobs_with_fallback(
+    jobs: List[Dict[str, Any]],
+    *,
+    query: str,
+    location: Optional[str] = None,
+    contract_type: Optional[str] = None,
+    remote: Optional[bool] = None,
+) -> tuple[List[Dict[str, Any]], str]:
+    """
+    Apply filters with progressive relaxation when APIs return data but filters remove everything.
+    Returns (filtered_jobs, filter_mode).
+    """
+    strict = filter_jobs(
+        jobs, query=query, location=location, contract_type=contract_type, remote=remote, strict=True
+    )
+    if strict:
+        return strict, "strict"
+
+    if contract_type:
+        relaxed_contract = filter_jobs(
+            jobs, query=query, location=location, contract_type=None, remote=remote, strict=True
+        )
+        if relaxed_contract:
+            return relaxed_contract, "relaxed_contract_type"
+
+    if query:
+        broad_terms = _query_terms(query)
+        if len(broad_terms) > 1:
+            broad = [
+                job
+                for job in jobs
+                if any(
+                    term in " ".join(
+                        [
+                            job.get("title", ""),
+                            job.get("description", ""),
+                            " ".join(job.get("tags") or []),
+                        ]
+                    ).lower()
+                    for term in broad_terms[-1:]
+                )
+            ]
+            if broad:
+                return broad, "broad_query"
+
+    if jobs:
+        return jobs[:80], "unfiltered_fallback"
+
+    return [], "empty"
