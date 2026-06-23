@@ -77,20 +77,4 @@ L'application sera accessible sur :
 - Documentation API (Swagger) : `http://localhost:8000/docs`
 
 ---
-
-## 📈 Pourquoi ce projet pour un recruteur ?
-
-- **Maîtrise de l'IA Générative** : Utilisation avancée de LLMs pour des tâches complexes de raisonnement et de transformation de données.
-- **Architecture Moderne** : Mise en œuvre d'une architecture asynchrone, scalable et basée sur des micro-services/agents.
-- **Intégrations Multiples** : Capacité à agréger des données provenant de nombreuses API tierces de manière robuste.
-- **Full-Stack Proficiency** : Développement complet d'une interface utilisateur réactive liée à un backend complexe.
-- **Qualité de Code** : Utilisation de typage fort (TypeScript, Pydantic), migrations de base de données et conteneurisation.
-
----
-
-## 📄 Licence
-
-Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
-
----
-*Développé avec passion dans le cadre du **USAII Hackathon** pour aider les talents de demain.*
+*Développé avec passion dans le cadre du **USAII Hackathon**
